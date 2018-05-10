@@ -21,6 +21,15 @@ angular.module('shoplyApp').controller('EditClientCtrl', function ($scope, $root
         placeholder:'Sexo' 
     };
 
+    $scope.estado_civil = {
+        plugins: SmartPhone.isAny() ? ['hidden_textfield'] : [],
+        create:false,
+        maxItems:1,
+        valueField: 'value',
+        labelField: 'text',
+        placeholder:'Estado Civil' 
+    };
+
     $scope.tarjetas_credito = {
             plugins: SmartPhone.isAny() ? ['hidden_textfield'] : [],
             create:false,

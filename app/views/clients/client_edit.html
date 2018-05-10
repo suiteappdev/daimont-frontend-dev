@@ -271,25 +271,31 @@
                       </div>
 
                       <div class="row">
-                          <div class="col-lg-4">
+                          <div class="col-lg-3">
                             <div class="form-group text-left">
                                  <label class="text-muted">Fecha de expedición <span style="color:red;font-size: 10px;" ng-show=" (profile.$submitted) && profile.fecha_expedicion.$invalid"> Este campo es requerido</span></label>
                                  <date-inline name="fecha_expedicion" required ng-model="client.data.fecha_expedicion" initial="1920"></date-inline>
                             </div>
                               
                           </div>
-                          <div class="col-lg-4">
+                          <div class="col-lg-3">
                             <div class="form-group text-left">
                                 <label class="text-muted">Ciudad de expedición<span style="color:red;font-size: 10px;" ng-show=" (profile.$submitted) && profile.ciudad_expedicion.$invalid"> Este campo es requerido</span></label>
                                 <ciudad-field name="ciudad_expedicion" required placeholder="Ciudad de expedición" ng-model="client.data.ciudad_expedicion"></ciudad-field>
                             </div>
                           </div>
-                          <div class="col-lg-4">
+                          <div class="col-lg-3">
                             <div class="form-group text-left">
                                  <label class="text-muted">Sexo<span style="color:red;font-size: 10px;" ng-show=" (profile.$submitted) && profile.sexo.$invalid">Este campo es requerido</span></label>
                                 <selectize name="sexo" required config="sexo" options='[{value:"Masculino", text:"Masculino"}, {value:"Femenino", text:"Femenino"}]' ng-model="client.data.sexo"></selectize>     
                             </div>
                           </div>
+                            <div class="col-lg-3">
+                              <div class="form-group text-left">
+                                   <label class="text-muted">Estado Civil<span style="color:red;font-size: 10px;" ng-show=" (profile.$submitted) && profile.estado_civil.$invalid">Este campo es requerido</span></label>
+                                   <selectize name="estado_civil" required config="estado_civil" options='[{value:"Solter@", text:"Solter@"}, {value:"Comprometid@", text:"Comprometid@"}, {value:"Comprometid@", text:"Comprometid@"},  {value:"Casad@", text:"Casad@"},  {value:"Divorciad@", text:"Divorciad@"}]' ng-model="client.data.estado_civil"></selectize>     
+                              </div>
+                            </div>
                           <div class="col-lg-6">
                             <div class="form-group text-left" ng-class="{ 'has-danger' : (profile.$submitted || profile.phone.$touched) && profile.phone.$invalid }">
                                  <label class="text-muted">Teléfono celular</label>

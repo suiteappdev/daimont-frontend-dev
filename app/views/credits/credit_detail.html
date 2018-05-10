@@ -167,6 +167,10 @@
                                                   <p ng-show="!credit._user.data.facebookId">DAIMONT</p>
                                               </div>
                                               <div class="form-group col-lg-6">
+                                                  <label class="bold">Estado Civil</label>
+                                                  <p>{{(credit._user.data.estado_civil).toUpperCase() || 'No Definido'}}</p>
+                                              </div>
+                                              <div class="form-group col-lg-6">
                                                   <label class="bold">Vehículo</label>
                                                   <p>{{(credit._user.data.vehiculo || 'No Definido') + ' ' + (credit._user.data.placa ).toUpperCase()}}</p>
                                               </div>

@@ -29,6 +29,15 @@ angular.module('shoplyApp')
         placeholder:'Sexo' 
     };
 
+    $scope.estado_civil = {
+        plugins: SmartPhone.isAny() ? ['hidden_textfield'] : [],
+        create:false,
+        maxItems:1,
+        valueField: 'value',
+        labelField: 'text',
+        placeholder:'Estado Civil' 
+    };
+
     $scope.tarjetas_credito = {
             plugins: SmartPhone.isAny() ? ['hidden_textfield'] : [],
             create:false,
@@ -353,6 +362,8 @@ $scope.ocupacion_records = [
             $scope.profile.fecha_expedicion.$setValidity('required', true);
         }
 
+
+
         if(!$rootScope.user.data.ciudad_expedicion){
             $scope.profile.ciudad_expedicion.$setValidity('required', false);
 
@@ -366,6 +377,13 @@ $scope.ocupacion_records = [
         }else{
           $scope.profile.sexo.$setValidity('required', true);
         } 
+
+        if(!$rootScope.user.data.estado_civil){
+            $scope.profile.estado_civil.$setValidity('required', false);
+
+        }else{
+          $scope.profile.estado_civil.$setValidity('required', true);
+        }
 
         if($scope.profile.$invalid){
             modal.incompleteForm();
