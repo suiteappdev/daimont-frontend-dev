@@ -71,7 +71,7 @@ angular.module('shoplyApp')
         setFocus : "=",
         showAll : "@",
         key : "@",
-        disabled :"@",
+        disabled :"=",
         label : "@",
         searchby:"=",
         placeholder:"@"

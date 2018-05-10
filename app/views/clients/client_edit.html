@@ -320,6 +320,30 @@
                                   <input type="text" required ng-model="client.email" class="form-control" name="email" placeholder="Correo electronico" ng-class="{ 'form-control-danger' : (profile.$submitted || profile.email.$touched) && profile.email.$invalid }" />
                               </div>                    
                           </div>
+                  <div class="col-lg-3 text-center">
+                    <div class="form-group" style="margin-top:10px;">
+                    <label style="display:block;" class="text-muted">¿Tiene vehículo propio?  <span 
+                         style="color:red;font-size: 10px;" ng-show=" (references.$submitted) && !client.data.vehiculo"> Este campo es requerido</span></label>
+                        <label class="checkbox-inline text-muted">
+                          <input type="radio" ng-model="client.data.vehiculo" value="Carro">
+                          Carro
+                        </label>
+                        <label class="checkbox-inline text-muted">
+                          <input type="radio" ng-model="client.data.vehiculo" value="Moto">
+                          Moto
+                        </label>
+                        <label class="checkbox-inline text-muted">
+                          <input type="radio" ng-model="client.data.vehiculo" value="No">
+                          No
+                        </label>
+                    </div>                    
+                  </div>
+                  <div class="col-lg-3" ng-show="client.data.vehiculo == 'Carro' || client.data.vehiculo == 'Moto'" >
+                    <div class="form-group text-left" ng-class="{ 'has-danger' : (references.$submitted || references.placa.$touched) && references.placa.$invalid }">
+                         <label class="text-muted">Placa de tu vehículo.</label>
+                        <input type="text" name="placa" ng-model="client.data.placa" class="form-control"  placeholder="Placa" ng-class="{ 'form-control-danger' : (references.$submitted || references.placa.$touched) && references.placa.$invalid }" />
+                    </div>
+                  </div>
                       </div> 
                     </form>
         <h3>Referencias</h3>

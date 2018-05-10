@@ -73,31 +73,55 @@
                         <selectize name="sexo" required config="sexo" options='[{value:"Masculino", text:"Masculino"}, {value:"Femenino", text:"Femenino"}]' ng-model="$root.user.data.sexo"></selectize>     
                     </div>
                   </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                    <label style="display:block;" class="text-muted">¿Tiene vehículo propio?  <span 
+                         style="color:red;font-size: 10px;" ng-show=" (references.$submitted) && !$root.user.data.vehiculo"> Este campo es requerido</span></label>
+                        <label class="checkbox-inline text-muted">
+                          <input type="radio" ng-model="$root.user.data.vehiculo" value="Carro">
+                          Carro
+                        </label>
+                        <label class="checkbox-inline text-muted">
+                          <input type="radio" ng-model="$root.user.data.vehiculo" value="Moto">
+                          Moto
+                        </label>
+                        <label class="checkbox-inline text-muted">
+                          <input type="radio" ng-model="$root.user.data.vehiculo" value="No">
+                          No
+                        </label>
+                    </div>                    
+                  </div>
+                  <div class="col-lg-3" ng-show="$root.user.data.vehiculo == 'Carro' || $root.user.data.vehiculo == 'Moto'" >
+                    <div class="form-group text-left" ng-class="{ 'has-danger' : (references.$submitted || references.rfother.$touched) && references.rfother.$invalid }">
+                         <label class="text-muted">Placa de tu vehículo.</label>
+                        <input type="text" name="placa" ng-model="$root.user.data.placa" class="form-control"  placeholder="Placa" ng-class="{ 'form-control-danger' : (references.$submitted || references.placa.$touched) && references.placa.$invalid }" />
+                    </div>
+                  </div>                                
                   <div class="col-lg-6">
                     <div class="form-group text-left" ng-class="{ 'has-danger' : (profile.$submitted || profile.phone.$touched) && profile.phone.$invalid }">
                          <label class="text-muted">Teléfono celular</label>
                         <input type="tel" name="phone" required ng-model="$root.user.data.phone" class="form-control" name="tel" placeholder="Teléfono celular" ng-class="{ 'form-control-danger' : (profile.$submitted || profile.phone.$touched) && profile.phone.$invalid }" />
                     </div>
                   </div>
-                  <div class="col-lg-4">
+                   <div class="col-lg-6">
+                    <div class="form-group text-left">
+                         <label class="text-muted">WhatsApp</label>
+                        <input type="tel" name="whatapps"  ng-model="$root.user.data.whatsapps" class="form-control"  placeholder="Número WhatsApp" />
+                    </div>
+                  </div>   
+                  <div class="col-lg-6">
                     <div class="form-group text-left">
                          <label class="text-muted">Teléfono Alternativo</label>
                         <input type="tel" name="alternativo" ng-model="$root.user.data.alternativo" class="form-control" placeholder="Teléfono Alternativo" />
                     </div>
                   </div>
-                  <div class="col-lg-4">
+                   <div class="col-lg-6">
                     <div class="form-group text-left">
                          <label class="text-muted">Teléfono Fijo</label>
                         <input type="tel" name="fijo" ng-model="$root.user.data.fijo" class="form-control" placeholder="Teléfono Fijo" />
                     </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="form-group text-left">
-                         <label class="text-muted">WhatsApp</label>
-                        <input type="tel" name="whatapps"  ng-model="$root.user.data.whatsapps" class="form-control"  placeholder="Número WhatsApp" />
-                    </div>
-                  </div>                  
-                  <div class="col-lg-12">
+                  </div>                                
+                    <div class="col-lg-12">
                       <div class="form-group text-left"  ng-class="{ 'has-danger' : (profile.$submitted || profile.name.$touched) && profile.name.$invalid }">
                            <label class="text-muted">Correo electronico</label>
                           <input type="text" required ng-model="$root.user.email" class="form-control" name="email" placeholder="Correo electronico" ng-class="{ 'form-control-danger' : (profile.$submitted || profile.email.$touched) && profile.email.$invalid }" />
