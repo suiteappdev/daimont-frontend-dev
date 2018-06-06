@@ -53,7 +53,7 @@ angular.module('shoplyApp')
 
                 $scope.payday_30days = moment( $scope.credit.data.deposited_time_server || $scope.credit._contract.createAt).add(30, "days");
 
-                console.log("dias diff", (30 - user_payday.date()));
+                console.log("dias de intereses", (30 - user_payday.date()));
                 console.log("dias agregados",  user_payday.add((30 - user_payday.date()), 'days').format("LLL"));
 
                 $scope.final_expiration_date = user_payday.add((30 - user_payday.date()), 'days'); 
@@ -331,6 +331,7 @@ angular.module('shoplyApp')
       
       console.log("new date", $scope.new_date_payment);
 
+      // system es la varibale que contiene la fecha de deposito.
       var system = moment($scope.credit.data.deposited_time);
 
       if($scope.new_date_payment){
@@ -338,15 +339,15 @@ angular.module('shoplyApp')
       }else{
 
           if($scope.credit.data.status == 'Finalizado'){
-            var now = moment($scope.credit._payment.createdAt);
+            var now = moment($scope.credit._payment[0].createdAt);
             $scope.freez = true;
           }else{
-              var now = moment(new Date());
+                var now = moment(new Date());
                 $scope.freez = false;
           }
       }
 
-
+      //variable que contiene los dias de intereses
       $scope.payForDays  = now.diff(system, 'days') == 0 ? 1 : now.diff(system, 'days');
 
       $scope.mora.interests = (parseInt($scope.credit.data.amount[0]) * (2.18831289 / 100));
