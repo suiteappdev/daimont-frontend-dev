@@ -153,27 +153,27 @@ angular.module('shoplyApp')
     }
 
     $scope._request_onWhatsApps = function(){
-      this.record.data._request_onWhatsApps = this.record.data._request_onWhatsApps ? false : true;
-      if(this.record.data._request_onWhatsApps){
-          api.credits().add("request/whatsapp/" + this.record._id + "/enable").put().success(function(res){
+      this.record._user.data._request_onWhatsApps = this.record._user.data._request_onWhatsApps ? false : true;
+      if(this.record._user.data._request_onWhatsApps){
+          api.credits().add("request/whatsapp/" + this.record._user._id + "/enable").put().success(function(res){
             console.log("whatapp", true);
           });
       }else{
-          api.credits().add("request/whatsapp/" + this.record._id + "/disabled").put().success(function(res){
+          api.credits().add("request/whatsapp/" + this.record._user._id + "/disabled").put().success(function(res){
             console.log("whatapp", false);
           });
       }
     }
 
     $scope._request_onPhone = function(){
-      this.record.data._request_onPhone = this.record.data._request_onPhone ? false : true;
+      this.record._user.data._request_onPhone = this.record._user.data._request_onPhone ? false : true;
 
-      if(this.record.data._request_onPhone){
-          api.credits().add("request/phone/" + this.record._id + "/enable").put().success(function(res){
+      if(this.record._user.data._request_onPhone){
+          api.credits().add("request/phone/" + this.record._user._id + "/enable").put().success(function(res){
 
           });
       }else{
-          api.credits().add("request/phone/" + this.record._id + "/disabled").put().success(function(res){
+          api.credits().add("request/phone/" + this.record._user._id + "/disabled").put().success(function(res){
 
           });
       }
@@ -181,45 +181,125 @@ angular.module('shoplyApp')
     }
 
     $scope._request_onEmail = function(){
-      this.record.data._request_onEmail = this.record.data._request_onEmail ? false : true;
+      this.record._user.data._request_onEmail = this.record._user.data._request_onEmail ? false : true;
       
-      if(this.record.data._request_onEmail){
-          api.credits().add("request/email/" + this.record._id + "/enable").put().success(function(res){
+      if(this.record._user.data._request_onEmail){
+          api.credits().add("request/email/" + this.record._user._id + "/enable").put().success(function(res){
 
 
           });
       }else{
-          api.credits().add("request/email/" + this.record._id + "/disabled").put().success(function(res){
+          api.credits().add("request/email/" + this.record._user._id + "/disabled").put().success(function(res){
           
 
           });
       }
     }
 
+    $scope._request_onBankCheck = function(){
+      var _record = this.record;
+
+       modal.confirm({
+               closeOnConfirm : true,
+               title: "Está Seguro?",
+               text: "confirmas que deseas realizar este movimiento ?",
+               confirmButtonColor: "#008086",
+               type: "success" },
+               function(isConfirm){ 
+                   if (isConfirm) {
+                        _record._user.data._request_onBankCheck = _record._user.data._request_onBankCheck ? false : true;
+
+                      if(_record._user.data._request_onBankCheck){
+                          api.credits().add("request/bankCheck/" + _record._user._id + "/enable").put().success(function(res){
+                            console.log("bankCheck", true);
+                          });
+                      }else{
+
+                          api.credits().add("request/bankCheck/" + _record._user._id + "/disabled").put().success(function(res){
+                            console.log("bankCheck", false);
+                          });
+                      }
+                   }
+        });
+    }
+
+    $scope._request_onPhoneCheck = function(){
+      var _record = this.record;
+       modal.confirm({
+               closeOnConfirm : true,
+               title: "Está Seguro?",
+               text: "confirmas que deseas realizar este movimiento ?",
+               confirmButtonColor: "#008086",
+               type: "success" },
+               function(isConfirm){ 
+                   if (isConfirm) {
+                      _record._user.data._request_onPhoneCheck = _record._user.data._request_onPhoneCheck ? false : true;
+                      if(_record._user.data._request_onPhoneCheck){
+                          api.credits().add("request/phoneCheck/" + _record._user._id + "/enable").put().success(function(res){
+
+                          });
+                      }else{
+                          api.credits().add("request/phoneCheck/" + _record._user._id + "/disabled").put().success(function(res){
+
+                          });
+                      }
+                   }
+        });
+    }
+
+    $scope._request_onEmailCheck = function(){
+      var _record = this.record;
+
+       modal.confirm({
+               closeOnConfirm : true,
+               title: "Está Seguro?",
+               text: "confirmas que deseas realizar este movimiento ?",
+               confirmButtonColor: "#008086",
+               type: "success" },
+               function(isConfirm){ 
+                   if (isConfirm) {
+                          _record._user.data._request_onEmailCheck = _record._user.data._request_onEmailCheck ? false : true;
+                          
+                          if(_record._user.data._request_onEmailCheck){
+                              api.credits().add("request/emailCheck/" + _record._user._id + "/enable").put().success(function(res){
+
+
+                              });
+                          }else{
+                              api.credits().add("request/emailCheck/" + _record._user._id + "/disabled").put().success(function(res){
+                              
+
+                              });
+                          }
+                   }
+        });
+
+    }
+
 
 
   $scope._payment_onWhatsApps = function(){
-      this.record.data._payment_onWhatsApps = this.record.data._payment_onWhatsApps ? false : true;
-      if(this.record.data._payment_onWhatsApps){
-          api.credits().add("payment/whatsapp/" + this.record._id + "/enable").put().success(function(res){
+      this.record._user.data._payment_onWhatsApps = this.record._user.data._payment_onWhatsApps ? false : true;
+      if(this.record._user.data._payment_onWhatsApps){
+          api.credits().add("payment/whatsapp/" + this.record._user._id + "/enable").put().success(function(res){
             console.log("whatapp", true);
           });
       }else{
-          api.credits().add("payment/whatsapp/" + this.record._id + "/disabled").put().success(function(res){
+          api.credits().add("payment/whatsapp/" + this.record._user._id + "/disabled").put().success(function(res){
             console.log("whatapp", false);
           });
       }
     }
 
     $scope._payment_onPhone = function(){
-      this.record.data._payment_onPhone = this.record.data._payment_onPhone ? false : true;
+      this.record._user.data._payment_onPhone = this.record._user.data._payment_onPhone ? false : true;
 
-      if(this.record.data._payment_onPhone){
-          api.credits().add("payment/phone/" + this.record._id + "/enable").put().success(function(res){
+      if(this.record._user.data._payment_onPhone){
+          api.credits().add("payment/phone/" + this.record._user._id + "/enable").put().success(function(res){
 
           });
       }else{
-          api.credits().add("payment/phone/" + this.record._id + "/disabled").put().success(function(res){
+          api.credits().add("payment/phone/" + this.record._user._id + "/disabled").put().success(function(res){
 
           });
       }
@@ -227,15 +307,15 @@ angular.module('shoplyApp')
     }
 
     $scope._payment_onEmail = function(){
-      this.record.data._payment_onEmail = this.record.data._payment_onEmail ? false : true;
+      this.record._user.data._payment_onEmail = this.record._user.data._payment_onEmail ? false : true;
       
-      if(this.record.data._payment_onEmail){
-          api.credits().add("payment/email/" + this.record._id + "/enable").put().success(function(res){
+      if(this.record._user.data._payment_onEmail){
+          api.credits().add("payment/email/" + this.record._user._id + "/enable").put().success(function(res){
 
 
           });
       }else{
-          api.credits().add("payment/email/" + this.record._id + "/disabled").put().success(function(res){
+          api.credits().add("payment/email/" + this.record._user._id + "/disabled").put().success(function(res){
           
 
           });
@@ -253,7 +333,7 @@ angular.module('shoplyApp')
                type: "success" },
                function(isConfirm){ 
                    if (isConfirm) {
-                    _record.data._payment_onNotice = true;
+                    _record._user.data._payment_onNotice = true;
 
                         api.credits().add("notice/" + _record._id).post({}).success(function(res){
                             swal({

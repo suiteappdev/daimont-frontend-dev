@@ -1,4 +1,4 @@
-<div class="dashboard" ng-controller="CreditsCtrl" ng-init="load()" style="margin-top:75px;">
+|<div class="dashboard" ng-controller="CreditsCtrl" ng-init="load()" style="margin-top:75px;">
 <daimont-header></daimont-header>
 <div class="container" style="width:97%;">
   <div class="row">
@@ -89,7 +89,7 @@
         <thead>
           <tr>
             <th style="display:none;" ></th>
-            <th ng-show="params.status == 'firmado' || params.status == 'aceptado' || params.status == 'consignado' || params.status == 'finalizado' || params.status == 'morosos'" >Créditos</th>
+            <th ng-show="params.status == 'firmado' || params.status == 'aceptado' || params.status == 'consignado' || params.status == 'finalizado' || params.status == 'morosos' || params.status == 'pendiente_48'" >Créditos</th>
             <th>Cliente</th>
             <th>Estado</th>
             <th ng-hide="params.status == 'rechazado' || params.status == 'aceptado' || params.status == 'anulado'" >{{params.status == 'consignado' || params.status == 'finalizado' || params.status == 'morosos' ? 'Fecha de Consignación' : 'Fecha de solicitud'}}</th>
@@ -99,7 +99,7 @@
             <th ng-show="params.status == 'anulado'">Fecha de anulación</th>
             <th>Banco</th>
             <th>Monto</th>
-            <th ng-hide="params.status == 'firmado'">Total</th>
+            <th ng-hide="params.status == 'firmado' || params.status == 'pendiente_48'">Total</th>
             <th>Nota Cliente</th>
             <th>Nota Crédito</th>
             <th>Comandos</th>
@@ -111,13 +111,13 @@
         </tr>
           <tr ng-init="earlyPaymentRow()" ng-class="(record.data.viewed) ? 'row_viewed' : 'row_default'" 
               pagination-id="credits_entity"
-              dir-paginate="record in filtered = (records | orderBy: params.status == 'finalizado'  ? '-_payment.createdAt' : '-data.deposited_time'| searchField: '_user.name' | searchField:'_user.last_name' |  searchField:'criteria' | filter:search )                
+              dir-paginate="record in filtered = (records | orderBy: params.status == 'finalizado'  ? '-_payment[0].createdAt' : '-data.deposited_time'| searchField: '_user.name' | searchField:'_user.last_name' |  searchField:'criteria' | filter:search )                
               | itemsPerPage: items" 
               >
             <td style="display:none;"  ng-click="$event.stopPropagation()">
                 <input ng-hide="record.data.status == 'Rechazado' || record.data.status == 'Anulado'" id="checkbox1" type="checkbox" ng-model="record.add" ng-change="add_to_task()">
             </td>
-            <td ng-show="params.status == 'firmado' || params.status == 'consignado' || params.status == 'aceptado' || params.status == 'finalizado' || params.status == 'morosos'">{{record.data.count == 0 ? 1 : (record.data.count + 1)}}</td>
+            <td ng-show="params.status == 'firmado' || params.status == 'consignado' || params.status == 'aceptado' || params.status == 'finalizado' || params.status == 'morosos' || params.status == 'pendiente_48'">{{record.data.count == 0 ? 1 : (record.data.count + 1)}}</td>
             <td class="relative" ng-init="setCriteriaField()"><a style="margin-left:3px;" href="#" ui-sref="detail({ credit : record._id})" >{{(record._user.name + ' ' + record._user.data.second_name + ' ' + record._user.last_name + ' ' + record._user.data.second_last_name).toUpperCase()}}</a>
               <span ng-show="record.data.rejected > 0" class="badge badge-danger has_rejected">{{record.data.rejected}}</span>
             </td>
@@ -149,7 +149,7 @@
 
             <td ng-show="params.status == 'aceptado'" >{{(record.data.approved_server_time || record.data.deposited_time_server | moment: 'format': 'MMMM DD YYYY, h:mm:ss a').toUpperCase()}}</td>
 
-            <td ng-show="params.status == 'finalizado'" >{{(record._payment.createdAt | moment: 'format': 'MMMM DD YYYY, h:mm:ss a').toUpperCase()}}</td>
+            <td ng-show="params.status == 'finalizado'" >{{(record._payment[0].createdAt | moment: 'format': 'MMMM DD YYYY, h:mm:ss a').toUpperCase()}}</td>
 
             <td ng-show="params.status == 'preaprobado'" >{{(record.data.deposited_time_server | moment: 'format': 'MMMM DD YYYY, h:mm:ss a').toUpperCase()}}</td>
 
@@ -182,19 +182,27 @@
             </div>
             <div ng-init="getFiles()" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="First group">
-                <button type="button" class="btn " ng-click="_request_onWhatsApps()"  ng-class="record.data._request_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
-                <button type="button" class="btn" ng-click="_request_onPhone()"  ng-class="record.data._request_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                <button type="button" class="btn " ng-click="_request_onWhatsApps()"  ng-class="record._user.data._request_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                <button type="button" class="btn" ng-click="_request_onPhone()"  ng-class="record._user.data._request_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
 
-                <button type="button" class="btn" ng-click="_request_onEmail()"  ng-class="record.data._request_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
+                <button type="button" class="btn" ng-click="_request_onEmail()"  ng-class="record._user.data._request_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
               </div>
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="Second group">
-                <button type="button" class="btn " ng-click="_payment_onWhatsApps()"  ng-class="record.data._payment_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
-                <button type="button" class="btn" ng-click="_payment_onPhone()"  ng-class="record.data._payment_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                <button type="button" class="btn " ng-click="_payment_onWhatsApps()"  ng-class="record._user.data._payment_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                <button type="button" class="btn" ng-click="_payment_onPhone()"  ng-class="record._user.data._payment_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
 
-                <button type="button" class="btn" ng-click="_payment_onEmail()"  ng-class="record.data._payment_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
+                <button type="button" class="btn" ng-click="_payment_onEmail()"  ng-class="record._user.data._payment_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
               </div>
+
+              <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="Second group">
+                <button type="button" class="btn " ng-click="_request_onBankCheck()"  ng-class="record._user.data._request_onBankCheck ? 'btn-success' : 'btn-secondary'"><i class="fa fa-bank"></i></button>
+                <button type="button" class="btn" ng-click="_request_onPhoneCheck()"  ng-class="record._user.data._request_onPhoneCheck ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+
+                <button type="button" class="btn" ng-click="_request_onEmailCheck()"  ng-class="record._user.data._request_onEmailCheck ? 'btn-success' : 'btn-secondary'"><i class="fa fa-envelope"></i></button>
+              </div>
+
               <div class="btn-group btn-group-sm" style="margin-top:5px;" role="group" aria-label="Third group">
-                <button type="button" ng-class="record.data._payment_onNotice ? 'btn-success' : 'btn-secondary'" class="btn btn-secondary" ng-click="preEmail()" ><i class="fa fa-exclamation-triangle"></i></button>
+                <button type="button" ng-class="record._user.data._payment_onNotice ? 'btn-success' : 'btn-secondary'" class="btn btn-secondary" ng-click="preEmail()" ><i class="fa fa-exclamation-triangle"></i></button>
               </div>
             </div>
             </td>

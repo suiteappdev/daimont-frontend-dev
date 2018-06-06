@@ -205,6 +205,52 @@
        </div>
 
        </div>
+       <div class="col-lg-6">
+          <div class="container">
+              <div class='chat'>
+                <header>
+                  <h2 class='title'>
+                    <a href='https://www.elegantthemes.com/'>Clips de voz</a>
+                  </h2>
+                  <ul class='tools'>
+                    <li>
+                      <a class='fa fa-gear' href='#'></a>
+                    </li>
+                    <li>
+                      <a class='fa fa-search' href='#'></a>
+                    </li>
+                  </ul>
+                </header>
+                <div class='body'>
+                  <p ng-hide="calls.length > 0" class="text-muted text-center" style="padding: 20px;">No hay clips registrados</p>
+                  <ul ng-show="calls.length > 0">
+                    <li ng-repeat="call in calls">
+                      <a class='thumbnail' href='#'>
+                        NR
+                      </a>
+                      <div class='content'>
+                        <audio-player audio="call" ></audio-player>
+                        <h3>{{call.user}}</h3>
+                        <span class='preview'>{{call.comment}}</span>
+                        <span class='meta'>
+                          {{call.createAt | moment: 'fromNow'}} - {{ call.createAt | moment: 'format': 'MMMM DD YYYY, h:mm:ss a'}} 
+                          ·
+                          <a href ng-click="deleteCall()">Eliminar</a>
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <footer>
+                <div class="form-group">
+                   <button ng-click="upload_call()" class="btn btn-warning btn-block"><i class=" fa fa-microphone"></i>&nbsp;Subir clip de voz</button>
+                  <input type="file" id="call" name="call" ng-model="call_model" required reader="call_reader" style="display:none;">
+                </div>
+                </footer>
+              </div>
+
+          </div>         
+       </div>
       </div>
     <br>
     <br>

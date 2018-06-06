@@ -15,7 +15,7 @@ angular.module('shoplyApp').directive('reader', function (){
                 scope.$apply(function () {
                     scope.reader = changeEvent.target.files[0];
                     var extension = changeEvent.target.files[0].name.substr(changeEvent.target.files[0].name.lastIndexOf('.') + 1).toLowerCase();
-                    var allowedExtensions = ['png', 'jpeg', 'jpg', 'gif', 'pdf'];
+                    var allowedExtensions = ['png', 'jpeg', 'jpg', 'gif', 'pdf', 'mp3', 'wav'];
                       
                     if (allowedExtensions.indexOf(extension) === -1){
                         ngModel.$valid = false;

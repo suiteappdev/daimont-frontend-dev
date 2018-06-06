@@ -19,7 +19,7 @@
             </div>
             <div ng-hide="
                 credit.data.status == 'Consignado' || 
-                credit._payment ||
+                credit._payment.length > 0 ||
                 credit.data.status == 'Finalizado'  ||
                 credit.data.status == 'Pendiente' ||
                 credit.data.status == 'Anulado' ||
@@ -74,8 +74,8 @@
                                       <li class="nav-item">
                                           <a class="nav-link" style="border-radius:0;" ng-click="tab = 'IF'" ng-class="{'active' : tab === 'IF'}">Info Financiera</a>
                                       </li>
-                                      <li class="nav-item" ng-show="credit._payment">
-                                          <a class="nav-link" style="border-radius:0;background-color: #035e61;" ng-click="tab = 'IPA'" ng-class="{'active' : tab === 'IPA'}">Info de Pago</a>
+                                      <li class="nav-item" ng-show="credit._payment.length > 0">
+                                          <a class="nav-link" style="border-radius:0;background-color: #035e61;" ng-click="tab = 'IPA'" ng-class="{'active' : tab === 'IPA'}">Ultimo Pago</a>
                                       </li>
                                       <li class="nav-item">
                                           <a class="nav-link"  ng-click="tab = 'LPA'" ng-class="{'active' : tab === 'LPA'}">Lista de Pagos</a>
@@ -278,9 +278,9 @@
                                                     <input style="display:block;" type="checkbox" ng-model="lock_credit" ng-change="lock()" >
                                                 </div>
                                                 <div class="form-group col-lg-6 text-left" >
-                                                    <label class="bold">Crear pago</label>
-                                                    <button ng-disabled="$root.user.type == 'SUPERVISOR'"  ng-show="!credit._payment" style="width:150px;" class="btn btn-block btn-primary btn-sm" ng-click="update_payment()">Crear pago</button>
-                                                    <button ng-disabled="$root.user.type == 'SUPERVISOR'"  ng-show="credit._payment"  ng-click="update_payment()" class="btn btn-success btn-block btn-sm">Actualizar Pago</button>
+                                                    <label class="bold" style="display:block;">Crear pago</label>
+                                                    <button ng-disabled="$root.user.type == 'SUPERVISOR'"  ng-show="credit._payment.length == 0" style="width:150px;" class="btn btn-primary btn-sm" ng-click="update_payment()">Crear pago</button>
+                                                    <button ng-disabled="$root.user.type == 'SUPERVISOR'"  ng-show="credit._payment.length > 0"  ng-click="update_payment()" class="btn btn-success btn-sm">Actualizar Pago</button>
                                                 </div> 
                                             </div>  
                                           </div>
@@ -340,27 +340,31 @@
                                               <div class="row"> 
                                                 <div class="form-group col-lg-6 text-left">
                                                     <label class="bold">Monto</label>
-                                                    <p>{{credit._payment.data.total_payment | currency:"$ ":0 || 0}}</p>
+                                                    <p>{{credit._payment[0].data.total_payment | currency:"$ ":0 || 0}}</p>
                                                 </div> 
                                                 <div class="form-group col-lg-6 text-left">
                                                     <label class="bold">Interes</label>
-                                                    <p>{{credit._payment.data.interestsDays | currency:"$ ":0 || 0}}</p>
+                                                    <p>{{credit._payment[0].data.interestsDays | currency:"$ ":0 || 0}}</p>
                                                 </div> 
                                                 <div class="form-group col-lg-6 text-left">
                                                     <label class="bold">Gestión de credito</label>
-                                                    <p>{{credit._payment.data.system_quote | currency:"$ ":0 || 0}}</p>
+                                                    <p>{{credit._payment[0].data.system_quote | currency:"$ ":0 || 0}}</p>
                                                 </div> 
                                                 <div class="form-group col-lg-6 text-left">
                                                     <label class="bold">Iva</label>
-                                                    <p>{{credit._payment.data.iva | currency:"$ ":0 || 0}}</p>
+                                                    <p>{{credit._payment[0].data.iva | currency:"$ ":0 || 0}}</p>
                                                 </div> 
                                                 <div class="form-group col-lg-6 text-left">
                                                     <label class="bold">Fecha de pago</label>
-                                                    <p>{{(credit._payment.createdAt).toUpperCase()  | moment: 'format': 'MMMM DD YYYY, h:mm:ss a'}}</p>
+                                                    <p>{{(credit._payment[0].createdAt).toUpperCase()  | moment: 'format': 'MMMM DD YYYY, h:mm:ss a'}}</p>
+                                                </div> 
+                                                <div class="form-group col-lg-6 text-left">
+                                                    <label class="bold">Tipo de pago</label>
+                                                    <p>{{(credit._payment[0].data.tipo_pago || 'Finalizado').toUpperCase()}}</p>
                                                 </div> 
                                                 <div class="form-group col-lg-6 text-left">
                                                     <label class="bold">EVIDENCIA DE PAGO</label>
-                                                    <p><a href="{{credit._payment.data.transaction}}" target="_blank">ADJUNTO</a></p>
+                                                    <p><a href="{{credit._payment[0].data.transaction}}" target="_blank">ADJUNTO</a></p>
                                                 </div> 
                                             </div>  
                                           </div>
@@ -420,8 +424,8 @@
                                                       <thead>
                                                         <tr>
                                                           <th>Pagaré</th>
-                                                          <th>Tipo</th>
-                                                          <th>Monto</th>
+                                                          <th>Movimiento</th>
+                                                          <th>T. pago</th>
                                                           <th>Intereses</th>
                                                           <th>Iva</th>
                                                           <th>Comprobante</th>
@@ -435,6 +439,7 @@
                                                         | itemsPerPage: 5"  pagination-id="payments_user_entity">
                                                           <th scope="row"><a  href="#" ui-sref="detail({credit :  paymentRecord._credit._id})" >{{paymentRecord._credit.data.id}}</a></th>
                                                            <td>{{(paymentRecord.data.payment_type).toUpperCase()}}</td>
+                                                           <td>{{(paymentRecord.data.tipo_pago || 'Finalizado').toUpperCase()}}</td>
                                                           <td>{{paymentRecord._credit.data.amount[0] | currency:"$ ":0}}</td>
                                                           <td>{{paymentRecord.data.interestsDays | currency:"$ ":0}}</td>
                                                           <td>{{paymentRecord.data.iva | currency:"$ ":0}}</td>

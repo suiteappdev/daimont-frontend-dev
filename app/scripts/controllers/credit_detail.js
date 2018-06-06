@@ -387,6 +387,7 @@ angular.module('shoplyApp')
                      function(isConfirm){ 
                         if (isConfirm) {
                             $scope.new_payment();
+                            $scope.$close();
                         }
               });
           }
@@ -401,7 +402,8 @@ angular.module('shoplyApp')
 
              function(isConfirm){ 
                 if (isConfirm) {
-                    $scope.new_payment();
+                            $scope.new_payment();
+                            $scope.$close();
                 }
         });  
       }
@@ -414,6 +416,13 @@ angular.module('shoplyApp')
       $scope.new_payment_form.data.bank = $rootScope.bank_obj;
       $scope.new_payment_form._credit = $scope.credit._id;
       $scope.new_payment_form._user = $scope.credit._user._id;
+
+      if($scope.tipo_pago == "Abono"){
+         $scope.new_payment_form.data.tipo_pago = "Abono";
+      }else{
+         $scope.new_payment_form.data.tipo_pago = "Finalizado";
+      }
+
       console.log("paymentForm", $scope.new_payment_form);
 
       api.payments().add("update_payment_admin").post($scope.toFormData($scope.new_payment_form), {
@@ -421,11 +430,19 @@ angular.module('shoplyApp')
         headers: {'Content-Type':undefined, enctype:'multipart/form-data'}
         }).success(function(res){
               if(res){
-                  $scope.credit._payment = res._id;
+
+                  $scope.credit._payment = $scope.credit._payment || [];
+                  $scope.credit._payment.push(res._id);
                   $scope.credit._user = $scope.credit._user._id;
                   $scope.credit._contract = $scope.credit._contract._id || null;
-                  $scope.credit.data.status = 'Finalizado';
-                  api.credits($scope.credit._id).put($scope.credit).success(function(response){
+
+                  if($scope.tipo_pago == "Abono"){
+                      $scope.credit.data.status = 'Consignado';
+                  }else{
+                      $scope.credit.data.status = 'Finalizado';
+                  }
+
+                api.credits($scope.credit._id).put($scope.credit).success(function(response){
                     if(response){
                       swal("Pago Enviado!", "Has enviado la evidencia de pago correctamente.", "success");
                       $scope.load();

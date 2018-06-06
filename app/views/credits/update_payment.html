@@ -4,6 +4,19 @@
                     <div class="modal-body">
                         <form name="formUpgrade">
                             <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="checkbox-inline text-muted">
+                                      <input required name="finalizado" type="radio" ng-model="$parent.tipo_pago" value="Finalizado">
+                                      Finalizar
+                                    </label>
+ 
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="checkbox-inline text-muted">
+                                      <input required name="abono" type="radio" ng-model="$parent.tipo_pago" value="Abono">
+                                      Abono
+                                    </label> 
+                                </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label><strong>Nueva fecha de pago</strong></label>

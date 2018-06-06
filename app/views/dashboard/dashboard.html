@@ -55,7 +55,7 @@
     </div>
   </div>
 </div>
-<div class="container hidden-md-down" style="background-color: #ffffff;padding: 20px;height:100vh;">
+<div class="container hidden-md-down" style="background-color: #ffffff;padding: 20px;height:auto;">
   <div class="panel panel-default panel-table">
       <div class="panel-heading">
         <div class="row" ng-hide="(!current_credit && $root.state.current.name == 'dashboard') ">
@@ -220,54 +220,58 @@
                                       </div>
                                         <div ng-hide="!current_credit || $root.state.current.name == 'dashboard.new_credit' || (!current_credit && $root.state.current.name == 'dashboard.historial') || current_credit.data.status == 'Rechazado' || current_credit.data.status == 'Pendiente' || current_credit.data.status == 'Firmado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Aceptado' || $root.state.current.name == 'dashboard.historial'"   ng-show="current_credit.data.status == 'Consignado' || current_credit.data.status == 'Pagado'" class="col-lg-12" style="margin-top:10px"> <div class="alert alert-warning alert-dismissible" role="alert"> Al momento de pagar usted debe cancelar el valor del total a pagar hoy, los otros valores son de referencia.<button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button> </div> 
                                         </div>
-                                      <div class="row col-lg-12" ng-show="current_credit._payment"> 
+                                      <div class="row col-lg-12" ng-show="current_credit._payment.length > 0"> 
                                         <div class="col-lg-12">
                                           <h4>Tu información de pago</h4>  
                                         </div>
-                                          <div class="col-4">
-                                              <div class="form-group">
-                                                <label>Banco</label>
-                                                <p class="bank-btn" >{{current_credit._payment.data.bank.name}}</p>
-                                              </div>
-                                           </div>
-                                             <div class="col-4" >
-                                               <div class="form-group">
-                                                 <label>Titular</label>
-                                                 <p>{{current_credit._payment.data.bank.owner}}</p>
-                                               </div> 
+                                        <div class="row col-lg-12" pagination-id="pEntity" dir-paginate="p in current_credit._payment | itemsPerPage: 1">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                  <label>Banco</label>
+                                                  <p class="bank-btn" >{{p.data.bank.name}}</p>
+                                                </div>
                                              </div>
-                                             <div class="col-4" ng-show="current_credit._payment.data.bank.type">
-                                               <div class="form-group">
-                                                 <label>Cuenta</label>
-                                                 <p>{{current_credit._payment.data.bank.type}}</p>
-                                               </div> 
-                                             </div>
-                                             <div class="col-4" ng-show="current_credit._payment.data.bank.account">
-                                               <div class="form-group">
-                                                 <label>Numero de cuenta</label>
-                                                 <p>{{current_credit._payment.data.bank.account}}</p>
-                                               </div> 
-                                             </div>
-                                             <div class="col-4" ng-show="current_credit._payment.data.bank.nit">
-                                               <div class="form-group">
-                                                 <label>NIT</label>
-                                                 <p>{{current_credit._payment.data.bank.nit}}</p>
-                                               </div> 
-                                             </div>
-                                             <div class="col-4" ng-show="current._credit_payment.data.bank.cc">
-                                               <div class="form-group">
-                                                 <label>Cedula de Ciudadanía</label>
-                                                 <p>{{current_credit._payment.data.bank.cc}}</p>
-                                               </div> 
-                                             </div>
-                                            <div class="col-lg-4">
-                                             <div class="form-group text-left">
-                                                <label>Evidencia de pago</label>
-                                                 <p class="text-primary"><i class="fa fa-paperclip" aria-hidden="true"></i><a class="text-primary" href="{{current_credit._payment.data.transaction}}" target="_blank"> Archivo</a></p>
-                                              </div>
-                                            </div>
-                                      </div>
-
+                                               <div class="col-4" >
+                                                 <div class="form-group">
+                                                   <label>Titular</label>
+                                                   <p>{{p.data.bank.owner}}</p>
+                                                 </div> 
+                                               </div>
+                                               <div class="col-4" ng-show="p.data.bank.type">
+                                                 <div class="form-group">
+                                                   <label>Cuenta</label>
+                                                   <p>{{p.data.bank.type}}</p>
+                                                 </div> 
+                                               </div>
+                                               <div class="col-4" ng-show="p.data.bank.account">
+                                                 <div class="form-group">
+                                                   <label>Numero de cuenta</label>
+                                                   <p>{{p.data.bank.account}}</p>
+                                                 </div> 
+                                               </div>
+                                               <div class="col-4" ng-show="p.data.bank.nit">
+                                                 <div class="form-group">
+                                                   <label>NIT</label>
+                                                   <p>{{p.data.bank.nit}}</p>
+                                                 </div> 
+                                               </div>
+                                               <div class="col-4" ng-show="p.data.bank.cc">
+                                                 <div class="form-group">
+                                                   <label>Cedula de Ciudadanía</label>
+                                                   <p>{{p.data.bank.cc}}</p>
+                                                 </div> 
+                                               </div>
+                                              <div class="col-lg-4">
+                                               <div class="form-group text-left">
+                                                  <label>Evidencia de pago</label>
+                                                   <p class="text-primary"><i class="fa fa-paperclip" aria-hidden="true"></i><a class="text-primary" href="{{p.data.transaction}}" target="_blank"> Archivo</a></p>
+                                                </div>
+                                              </div>                                          
+                                        </div>
+                                          <div class="col-lg-12"> 
+                                            <dir-pagination-controls class="pull-left" pagination-id="pEntity"></dir-pagination-controls>
+                                          </div> 
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 text-left">
@@ -496,53 +500,61 @@
                  </div> 
                </div>
               </li>
-              <li class="list-group-item row " style="padding:0px;"  ng-show="current_credit._payment">
+              <li class="list-group-item row " style="padding:0px;"  ng-show="current_credit._payment.length > 0">
                 <p style="background-color: #dc4b09;color: #fff;padding: 5px;width: 100%;margin-bottom:0px;">Tu pago actual</p>
               </li>
-              <li class="list-group-item row" ng-show="current_credit._payment">
-               <div class="col-6" >
-                  <div class="form-group">
-                    <label>Banco</label>
-                    <p class="bank-btn" >{{current_credit._payment.data.bank.name}}</p>
-                  </div>
-               </div>
+              <div pagination-id="pEntity" dir-paginate="p in current_credit._payment | itemsPerPage: 1">
+   <li class="list-group-item row" ng-show="current_credit._payment.length > 0">
                  <div class="col-6" >
-                   <div class="form-group">
-                     <label>Titular</label>
-                     <p>{{current_credit._payment.data.bank.owner}}</p>
-                   </div> 
+                    <div class="form-group">
+                      <label>Banco</label>
+                      <p class="bank-btn" >{{p.data.bank.name}}</p>
+                    </div>
                  </div>
-                 <div class="col-6" ng-show="current_credit._payment.data.bank.type">
-                   <div class="form-group">
-                     <label>Cuenta</label>
-                     <p>{{current_credit._payment.data.bank.type}}</p>
-                   </div> 
-                 </div>
-                 <div class="col-6" ng-show="current_credit._payment.data.bank.account">
-                   <div class="form-group">
-                     <label>Numero de cuenta</label>
-                     <p>{{current_credit._payment.data.bank.account}}</p>
-                   </div> 
-                 </div>
-                 <div class="col-6" ng-show="current_credit._payment.data.bank.nit">
-                   <div class="form-group">
-                     <label>NIT</label>
-                     <p>{{current_credit._payment.data.bank.nit}}</p>
-                   </div> 
-                 </div>
-                 <div class="col-6" ng-show="current._credit_payment.data.bank.cc">
-                   <div class="form-group">
-                     <label>Cedula de Ciudadanía</label>
-                     <p>{{current_credit._payment.data.bank.cc}}</p>
-                   </div> 
-                 </div>
-                 <div class="col-6">
-                   <div class="form-group">
-                     <label>Comprobante</label>
-                      <p class="text-primary"><i class="fa fa-paperclip" aria-hidden="true"></i><a class="text-primary" href="{{current_credit._payment.data.transaction}}" target="_blank"> Comprobante de pago</a></p>
-                   </div> 
-                 </div>
-              </li>
+                   <div class="col-6" >
+                     <div class="form-group">
+                       <label>Titular</label>
+                       <p>{{p.data.bank.owner}}</p>
+                     </div> 
+                   </div>
+                   <div class="col-6" ng-show="p.data.bank.type">
+                     <div class="form-group">
+                       <label>Cuenta</label>
+                       <p>{{p.data.bank.type}}</p>
+                     </div> 
+                   </div>
+                   <div class="col-6" ng-show="p.data.bank.account">
+                     <div class="form-group">
+                       <label>Numero de cuenta</label>
+                       <p>{{p.data.bank.account}}</p>
+                     </div> 
+                   </div>
+                   <div class="col-6" ng-show="p.data.bank.nit">
+                     <div class="form-group">
+                       <label>NIT</label>
+                       <p>{{p.data.bank.nit}}</p>
+                     </div> 
+                   </div>
+                   <div class="col-6" ng-show="p.data.bank.cc">
+                     <div class="form-group">
+                       <label>Cedula de Ciudadanía</label>
+                       <p>{{p.data.bank.cc}}</p>
+                     </div> 
+                   </div>
+                   <div class="col-6">
+                     <div class="form-group">
+                       <label>Comprobante</label>
+                        <p class="text-primary"><i class="fa fa-paperclip" aria-hidden="true"></i><a class="text-primary" href="{{p.data.transaction}}" target="_blank"> Comprobante de pago</a></p>
+                     </div> 
+                   </div>
+                </li>
+                <li class="list-group-item row ">  
+                  <div class="col-12"> 
+                      <dir-pagination-controls class="pull-left" pagination-id="pEntity"></dir-pagination-controls>
+                   </div>
+                </li>                
+              </div>
+             
               <li class="list-group-item row " ng-show="$root.bank_obj">
                 <p style="color: #f00;">* Por favor sube una foto (nitida) o pantallazo de tu comprobante de pago.</p>
               </li>

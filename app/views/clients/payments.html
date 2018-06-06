@@ -33,7 +33,8 @@
                               <thead>
                                 <tr>
                                   <th>Pagaré</th>
-                                  <th>Tipo</th>
+                                  <th>Movimiento</th>
+                                  <th>T. pago</th>
                                   <th>Monto</th>
                                   <th>Intereses</th>
                                   <th>Iva</th>
@@ -47,7 +48,8 @@
                                 <tr  dir-paginate="paymentRecord in filtered = ($parent.$parent.payments_records | orderBy:'-createdAt' | filter:searchPayment  | filter:{_user :  { data : { updated : true }} })                
                                 | itemsPerPage: 5"  pagination-id="payments_user_entity">
                                   <th scope="row"><a  href="#" ui-sref="detail({credit :  paymentRecord._credit._id})" >{{paymentRecord._credit.data.id}}</a></th>
-                                   <td>{{(paymentRecord.data.payment_type).toUpperCase()}}</td>
+                                  <td>{{(paymentRecord.data.payment_type).toUpperCase()}}</td>
+                                  <td>{{(paymentRecord.data.tipo_pago || 'Finalizado').toUpperCase()}}</td>
                                   <td>{{paymentRecord._credit.data.amount[0] | currency:"$ ":0}}</td>
                                   <td>{{paymentRecord.data.interestsDays | currency:"$ ":0}}</td>
                                   <td>{{paymentRecord.data.iva | currency:"$ ":0}}</td>

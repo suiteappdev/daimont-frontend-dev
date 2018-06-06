@@ -475,7 +475,7 @@ angular
           }
         };
 
-        //forceSSL();
+        forceSSL();
 
         $rootScope.currency = constants.currency;
         $rootScope.base = constants.uploadFilesUrl;

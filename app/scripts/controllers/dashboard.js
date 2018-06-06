@@ -111,7 +111,7 @@ angular.module('shoplyApp')
               var pay_day = moment(res.credit.data.pay_day);
               var date_expired = pay_day.add(30, 'days');
 
-              if(moment(res.credit._payment.createdAt).isBefore(date_expired)){
+              if(moment(res.credit._payment[0].createdAt).isBefore(date_expired)){
                   $rootScope.showCupoMenu = true;
               }
 
@@ -507,7 +507,8 @@ angular.module('shoplyApp')
         }).success(function(res){
               
               if(res){
-                  $scope.current_credit._payment = res._id;
+                  $scope.current_credit._payment = $scope.current_credit._payment || [];
+                  $scope.current_credit._payment.push(res._id);
                   $scope.current_credit._contract = $scope.current_credit._contract._id || null;
                   $scope.current_credit.data.status = 'Pagado';
                   api.credits($scope.current_credit._id).put($scope.current_credit).success(function(response){

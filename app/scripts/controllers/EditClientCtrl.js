@@ -203,6 +203,10 @@ $scope.ocupacion_records = [
       $('#cl').click();
     }
 
+    $scope.upload_call = function(){
+      $('#call').click();
+    }
+
     $scope.$watch("cf", function(o, n){
       if(n){
             swal({
@@ -438,6 +442,129 @@ $scope.ocupacion_records = [
 
                         $scope.files.$add(data);
                         $scope.client.data.cl = data;
+                        window.sweetAlert.close();
+
+                    });
+
+                    uploadTask.$error(function(error) {
+                        var msg = '';
+                        switch (error.code) {
+                            case 'storage/unauthorized':
+                            msg = 'User does not have permission to access the object.';
+                            break;
+                            case 'storage/canceled':
+                            msg = 'User canceled the upload.';
+                            break;
+                            case 'storage/unknown':
+                            msg = ' Unknown error occurred, Please try later.';
+                            break;
+                        }
+
+                        window.sweetAlert.close();
+                    });
+          });
+      }
+    });
+
+    $scope.$watch("call_model", function(o, n){
+      if(n){
+            swal({
+            title: "Está Seguro?",
+            text: "¿Deseas subir este archivo?",
+            type: "info",
+            confirmButtonColor: "#008086",
+            cancelButtonText: "Cancelar",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+          },
+          function(){
+                  var storage = firebase.storage().ref("/calls/" + $scope.client._id + "/" + $scope.call.name);
+                  var st = $firebaseStorage(storage);
+                  var uploadTask = st.$put($scope.call_reader);
+                  
+                  uploadTask.$progress(function(snapshot) {
+                            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            switch (snapshot.state) {
+                                case firebase.storage.TaskState.PAUSED:
+                                    console.log('Upload is paused');
+                                    break;
+                                case firebase.storage.TaskState.RUNNING:
+                                    console.log('Upload is running', progress);
+                                    break;
+                            }
+                    }); 
+
+                    uploadTask.$complete(function(snapshot) {
+                        var data  = {
+                            filename : $scope.call_reader.name,
+                            size : $scope.call_reader.size,
+                            path : snapshot.downloadURL,
+                            createdAt : firebase.database.ServerValue.TIMESTAMP
+                        };
+
+                        $scope.calls.$add(data);
+                        window.sweetAlert.close();
+
+                    });
+
+                    uploadTask.$error(function(error) {
+                        var msg = '';
+                        switch (error.code) {
+                            case 'storage/unauthorized':
+                            msg = 'User does not have permission to access the object.';
+                            break;
+                            case 'storage/canceled':
+                            msg = 'User canceled the upload.';
+                            break;
+                            case 'storage/unknown':
+                            msg = ' Unknown error occurred, Please try later.';
+                            break;
+                        }
+
+                        window.sweetAlert.close();
+                    });
+          });
+      }
+
+      if(o){
+            swal({
+            title: "Está Seguro?",
+            text: "¿Deseas subir este archivo?",
+            type: "info",
+            confirmButtonColor: "#008086",
+            cancelButtonText: "Cancelar",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+          },
+          function(){
+                  var storage = firebase.storage().ref("/calls/" + $scope.client._id + "/" + $scope.call_reader.name);
+                  var st = $firebaseStorage(storage);
+                  var uploadTask = st.$put($scope.call_reader);
+                  
+                  uploadTask.$progress(function(snapshot) {
+                            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            switch (snapshot.state) {
+                                case firebase.storage.TaskState.PAUSED:
+                                    console.log('Upload is paused');
+                                    break;
+                                case firebase.storage.TaskState.RUNNING:
+                                    console.log('Upload is running');
+                                    console.log('Upload is running', progress);
+                                    break;
+                            }
+                    }); 
+
+                    uploadTask.$complete(function(snapshot) {
+                        var data  = {
+                            filename : $scope.call_reader.name,
+                            size : $scope.call_reader.size,
+                            path : snapshot.downloadURL,
+                            createdAt : firebase.database.ServerValue.TIMESTAMP
+                        };
+
+                        $scope.calls.$add(data);
                         window.sweetAlert.close();
 
                     });
@@ -1423,6 +1550,9 @@ $scope.ocupacion_records = [
             var refForArrayFiles =  firebase.database().ref("files").child(res._id);
             $scope.files = $firebaseArray(refForArrayFiles);
 
+            var refForArrayCalls =  firebase.database().ref("calls").child(res._id);
+            $scope.calls = $firebaseArray(refForArrayCalls);
+
 
           $scope.files.$loaded(function(data){
                 if(data.length > 0){
@@ -1732,6 +1862,23 @@ $scope.ocupacion_records = [
                  function(isConfirm){ 
                      if (isConfirm) {
                             firebase.database().ref("profileMessages").child($scope.client._id).child(_comment.$id).remove()
+                     }
+          }); 
+    }
+
+    $scope.deleteCall = function(){
+         var _call = this.call;
+
+         modal.confirm({
+                 closeOnConfirm : true,
+                 title: "Está Seguro?",
+                 text: "Confirma que desea  eliminar este clip de voz ?",
+                 confirmButtonColor: "#008086",
+                 closeOnConfirm: true,
+                 type: "warning" },
+                 function(isConfirm){ 
+                     if (isConfirm) {
+                            firebase.database().ref("calls").child($scope.client._id).child(_call.$id).remove()
                      }
           }); 
     }
