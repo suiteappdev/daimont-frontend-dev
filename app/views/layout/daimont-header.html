@@ -1,5 +1,5 @@
 <nav class="navbar navbar-toggleable-md fixed-top" style="background-color:#000!important;margin:0px;" data-nav-image="images/blurred-image-1.jpg">
-    <div class="container">
+    <div class="container" style="width:100%;">
         <div class="navbar-translate">
             <button class="navbar-toggler navbar-toggler-right" data-nav-image="" type="button" data-toggle="collapse" data-target="#example-navbar-info" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar bar1"></span>
@@ -25,6 +25,12 @@
     position: relative;">{{($root.user.name +' '+ $root.user.last_name)}}
                     <img style="height: 40px;float: left;margin-right: 10px;" ng-show="$root.user.data.picture" ng-src="{{$root.user.data.picture}}">
                     <img style="height: 40px;float: left;margin-right: 10px;" ng-show="!$root.user.data.picture" class="rounded-circle img-raised" ng-src="images/no_avatar.gif">
+                    </a>
+                </li>
+                <li class="nav-item" ui-sref-active="active" ng-show="$root.user && $root.user.type == 'ADMINISTRATOR' || $root.user.type == 'SUPERVISOR'">
+                    <a class="nav-link" href="#/credits" ui-sref="credits({status : 'preventivo'})">
+                        <p>Cobro preventivo</p>
+                         <span class="badge badge-success" ng-show="result_length > 0">{{result_length_preventivo}}</span>
                     </a>
                 </li>
                 <li class="nav-item" ui-sref-active="active" ng-show="$root.user && $root.user.type == 'ADMINISTRATOR' || $root.user.type == 'SUPERVISOR'">

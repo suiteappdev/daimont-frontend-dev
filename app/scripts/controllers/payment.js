@@ -52,6 +52,7 @@ angular.module('shoplyApp')
     $scope.finishedCredit = function(){
       var _credit = angular.copy(this.record._credit);
       var record = angular.copy(this.record);
+
        modal.confirm({
                closeOnConfirm : true,
                title: "Está Seguro?",
@@ -75,6 +76,7 @@ angular.module('shoplyApp')
                             function(isConfirm){
                               if(isConfirm){
                                  api.user(record._user._id).add("/allow_cupon").put({}).success(function(response){
+                                    $scope.$close();
                                  });                       
                               }
                             });

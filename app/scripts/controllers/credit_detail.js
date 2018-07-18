@@ -35,6 +35,12 @@ angular.module('shoplyApp')
                     });                  
                 }
 
+                if(!$scope.credit.data.viewedPreventivo){
+                    api.credits().add("set-viewed-preventivo/" + $scope.credit._id).put({}).success(function(response){
+                        console.log("response", response);
+                    });              
+                }
+
                 api.payments().add("user/" + $scope.credit._user._id).get().success(function(res){
                     $scope.payments_recordsDetails = res || []
                 }); 
@@ -74,6 +80,54 @@ angular.module('shoplyApp')
 
       }
     }
+
+    $scope.consultado = function(){
+       modal.confirm({
+               closeOnConfirm : true,
+               title: "Está Seguro?",
+               text: "Desea cambiar este crédito a estado consultado?",
+               confirmButtonColor: "#008086",
+               type: "warning" },
+               function(isConfirm){ 
+                   if (isConfirm) {
+                      api.credits().add("consultado/" + $scope.credit._id).put($scope.credit).success(function(res){
+                        if(res){
+                            swal({
+                              title: "Bien Hecho",
+                              text: "Estado cambiado correctamente.",
+                              type: "success",
+                              showCancelButton: false,
+                              confirmButtonColor: "#008086",
+                              confirmButtonText: "Ok",
+                              closeOnConfirm: true
+                            },
+                            function(){
+                                $state.go('credits', {status : 'consultado'})
+                            });
+                        }
+                      }); 
+                   }
+        });
+    }
+
+  $scope.setVistoPreventivo = function(){
+    $scope.credit.data.viewedPreventivo = $scope.credit.data.viewedPreventivo ? false : true;
+    
+    if($scope.credit.data.viewedPreventivo){
+        api.credits().add("set-viewed-preventivo/" + $scope.credit._id).put({}).success(function(response){
+            console.log("response", response);
+        });  
+
+        console.log("SET PREVENTIVO");
+    }else{
+        api.credits().add("unset-viewed-preventivo/" + $scope.credit._id).put({}).success(function(response){
+            console.log("response", response);
+        }); 
+
+        console.log("UNSET PREVENTIVO");
+    }
+  }
+
   $scope.fullname = function(){
     $scope.credit.fullname = (($scope.credit._user.name || '') +' '+ ($scope.credit._user.data.second_name || '') +' '+ ($scope.credit._user.last_name || '') +' '+($scope.credit._user.data.second_last_name || '')).replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').toUpperCase()
   }
@@ -377,40 +431,7 @@ angular.module('shoplyApp')
           $('#transaccion_bancaria').click();
     } 
 
-    $scope.$watch('new_payment_form.transaction', function(o, n){
-      if(n){
-            modal.confirm({
-                     closeOnConfirm : true,
-                     title: "Está Seguro?",
-                     text: "Confirma que has verificado el pago ?",
-                     confirmButtonColor: "#008086",
-                     type: "success" },
-                     function(isConfirm){ 
-                        if (isConfirm) {
-                            $scope.new_payment();
-                            $scope.$close();
-                        }
-              });
-          }
-
-      if(o){
-        modal.confirm({
-             closeOnConfirm : true,
-             title: "Está Seguro?",
-             text: "Confirma que has verificado el pago ?",
-             confirmButtonColor: "#008086",
-             type: "success" },
-
-             function(isConfirm){ 
-                if (isConfirm) {
-                            $scope.new_payment();
-                            $scope.$close();
-                }
-        });  
-      }
-    });
-
-    $scope.new_payment = function(){
+    $scope.new_payment = function(cb){
       $scope.new_payment_form.data = $scope.mora;
       $scope.new_payment_form.data.fromAdmin = true;
       $scope.new_payment_form.data.payment_type = $scope.payment_type;
@@ -445,8 +466,8 @@ angular.module('shoplyApp')
 
                 api.credits($scope.credit._id).put($scope.credit).success(function(response){
                     if(response){
-                      swal("Pago Enviado!", "Has enviado la evidencia de pago correctamente.", "success");
                       $scope.load();
+                      cb();
                     }
                 });
 
@@ -645,6 +666,62 @@ angular.module('shoplyApp')
       $state.go('home');
     }
 
+    $scope._references_family_onWhatsApps = function(){
+      $scope.credit._user.data._family_references_onWhatsApps = $scope.credit._user.data._family_references_onWhatsApps ? false : true;
+      if($scope.credit._user.data._family_references_onWhatsApps){
+          api.credits().add("request/familiy-references-whatsapps/" + $scope.credit._user._id + "/enable").put().success(function(res){
+            console.log("references", true);
+          });
+      }else{
+          api.credits().add("request/familiy-references-whatsapps/" + $scope.credit._user._id + "/disabled").put().success(function(res){
+            console.log("references", false);
+          });
+      }
+    }
+
+    $scope._references_family_onPhone = function(){
+      $scope.credit._user.data._family_references_onPhone = $scope.credit._user.data._family_references_onPhone ? false : true;
+
+      if($scope.credit._user.data._family_references_onPhone){
+          api.credits().add("request/family-references-phone/" + $scope.credit._user._id + "/enable").put().success(function(res){
+
+          });
+      }else{
+          api.credits().add("request/family-references-phone/" + $scope.credit._user._id + "/disabled").put().success(function(res){
+
+          });
+      }
+
+    }
+
+    $scope._references_comercial_onWhatsApps = function(){
+      $scope.credit._user.data._comercial_references_OnWhatsapps = $scope.credit._user.data._comercial_references_OnWhatsapps ? false : true;
+      if($scope.credit._user.data._comercial_references_OnWhatsapps){
+          api.credits().add("request/comercial-references-whatsapps/" + $scope.credit._user._id + "/enable").put().success(function(res){
+            console.log("references", true);
+          });
+      }else{
+          api.credits().add("request/comercial-references-whatsapps/" + $scope.credit._user._id + "/disabled").put().success(function(res){
+            console.log("references", false);
+          });
+      }
+    }
+
+    $scope._references_comercial_onPhone = function(){
+      $scope.credit._user.data._comercial_references_onPhone = $scope.credit._user.data._comercial_references_onPhone ? false : true;
+
+      if($scope.credit._user.data._comercial_references_onPhone){
+          api.credits().add("request/comercial-references-phone/" + $scope.credit._user._id + "/enable").put().success(function(res){
+
+          });
+      }else{
+          api.credits().add("request/comercial-references-phone/" + $scope.credit._user._id + "/disabled").put().success(function(res){
+
+          });
+      }
+
+    }
+
    $scope.reject = function(){
        modal.confirm({
                closeOnConfirm : true,
@@ -705,13 +782,10 @@ angular.module('shoplyApp')
 
     $scope.update_payment = function(){
       window.modal = modal.show({templateUrl : 'views/credits/update_payment.html', size:'lg', scope: this, backdrop: true, show : true, keyboard  : true}, function($scope){
-          /*api.user($scope.user._id).add("/update-cupon").put({cupon : $scope.user.data.cupon}).success(function(response){
-              if(response){
-                 swal("Cupo actualizado!", "Has modificado este cupo correctamente", "success");
-                 $scope.$close();
-                 $scope.load();
-              }
-          });*/
+          $scope.new_payment(function(){
+            swal("Pago Enviado!", "Has enviado la evidencia de pago correctamente.", "success");
+              $scope.$close()
+          });
       }); 
     } 
   });

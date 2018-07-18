@@ -31,6 +31,12 @@ angular.module('shoplyApp')
           $rootScope.result_length_preaprobado = res.length;
     }); 
 
+    api.credits().add('preventivo').get().success(function(res){
+          $rootScope.result_length_preventivo = res.filter(function(c){
+              return !c.data.viewedPreventivo;
+          }).length;
+    }); 
+
     api.credits().add('pendiente_48').get().success(function(res){
           $rootScope.result_length_pendiente_48 = res.length;
     }); 
@@ -82,6 +88,11 @@ angular.module('shoplyApp')
                       $scope.records = res || []
                       $scope.Records  = true;
                 }); 
+            }else if($stateParams.status == 'preventivo'){
+                api.credits().add('preventivo').get().success(function(res){
+                      $scope.records = res || []
+                      $scope.Records  = true;
+                }); 
             }else if($stateParams.status == 'rechazado'){
                 api.credits().add('rechazado').get().success(function(res){
                       $scope.records = res || []
@@ -115,6 +126,11 @@ angular.module('shoplyApp')
                 });   
             }else if($stateParams.status == 'anulado'){
                 api.credits().add('anulado').get().success(function(res){
+                      $scope.records = res || []
+                      $scope.Records  = true;
+                });   
+            }else if($stateParams.status == 'consultado'){
+                api.credits().add('consultado').get().success(function(res){
                       $scope.records = res || []
                       $scope.Records  = true;
                 });   
@@ -432,14 +448,19 @@ angular.module('shoplyApp')
       $state.go('detail', { credit : this.record._id } );
     }
 
-     $scope.add_to_task = function(){
-      if(this.record.add){
-        $scope.items_tasks.push(this.record);
+    $scope.setNegrita = function(){
+      if(this.record.data.viewedPreventivo){
+        api.credits().add("set-viewed-preventivo/" + this.record._id).put({}).success(function(response){
+            console.log("response", response);
+        });  
       }else{
-        $scope.items_tasks.splice($scope.items_tasks.indexOf(this.record), 1);
+        this.record.data.viewedPreventivo = false;
+
+        api.credits().add("unset-viewed-preventivo/" + this.record._id).put({}).success(function(response){
+            console.log("response", response);
+        }); 
       }
     }
-
 
     $scope.toFormData = function(obj, form, namespace) {
         var fd = form || new FormData();

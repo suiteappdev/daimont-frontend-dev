@@ -31,6 +31,7 @@
                <button type="button" ng-click="done()" class="btn btn-sm btn-primary btn-create" ng-disabled="$root.user.type == 'SUPERVISOR'">Depositar</button>
                <button type="button" ng-click="reject()" class="btn btn-sm btn-danger btn-create" ng-disabled="$root.user.type == 'SUPERVISOR'">Rechazar</button>            
                <button type="button" ng-click="nulled()" class="btn btn-sm btn-danger btn-create" ng-disabled="$root.user.type == 'SUPERVISOR'">Anular</button>
+               <button type="button" ng-click="consultado()" class="btn btn-sm btn-danger btn-create" ng-disabled="$root.user.type == 'SUPERVISOR'">Consultado</button>
 
             </div>
             <div>
@@ -47,7 +48,7 @@
     <div class="panel-heading">
         <div class="row">
           <div class="col col-xs-6">
-            <h3 class="panel-title" style="margin-bottom: 10px;!important;"><i class="fa fa-credit-card text-primary"></i>&nbsp;Detalle de Credito</h3>
+            <h3 class="panel-title" style="margin-bottom: 10px;!important;"><i class="fa fa-credit-card text-primary"></i>&nbsp;Detalle de Credito <span ng-show="credit.data.id">- {{credit.data.id}}</span></h3>
             <p class="text-muted">Información del credito actual.</p>
             <p class="text-muted" ng-show="credit._approvedby">Credito {{credit.data.status}} por {{(credit._approvedby.name + ' ' + credit._approvedby.last_name)}}</p>
            <p class="pull-left">
@@ -96,7 +97,11 @@
                                                 </div>
                                               </div>   
                                               <div class="row"> 
-                                               <div class="form-group col-lg-12">
+                                                <div class="form-group col-lg-12">
+                                                  <label class="bold">Numero de pagaré</label>
+                                                  <p>{{credit.data.id}}</p>
+                                              </div>  
+                                              <div class="form-group col-lg-12">
                                                   <label class="bold">Nombre Completo</label>
                                                     <p>{{credit.fullname}}</p>
                                               </div>                                       
@@ -177,38 +182,52 @@
                                               <div class="col-lg-12">
                                                 <h3>Referencias Personales</h3>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Nombres</label>
                                                   <p>{{(credit._user.data.rfname || 'No Definido').toUpperCase()}}</p>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Apellidos</label>
                                                   <p>{{(credit._user.data.rflastname || 'No Definido').toUpperCase()}}</p>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
+                                                  <label class="bold">Comandos</label>
+                                                  <div class="btn-group btn-block mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="First group">
+                                                      <button type="button" class="btn  btn-secondary" ng-click="_references_family_onWhatsApps()" ng-class="credit._user.data._family_references_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                                                      <button type="button" class="btn btn-secondary" ng-click="_references_family_onPhone()" ng-class="credit._user.data._family_references_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                                                    </div>
+                                              </div>
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Telefono</label>
                                                   <p>{{(credit._user.data.rfphone || 'No Definido')}}</p>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Parentesco</label>
                                                   <p>{{(credit._user.data.parentesco || $root.user.data.rfother || 'No Definido')}}</p>
                                               </div>
                                               <div class="col-lg-12">
                                                 <h3>Referencias Comerciales</h3>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Nombres</label>
                                                   <p>{{(credit._user.data.rcname || 'No Definido').toUpperCase()}}</p>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Apellidos</label>
                                                   <p>{{(credit._user.data.rclastname || 'No Definido').toUpperCase()}}</p>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
+                                                  <label class="bold">Comandos</label>
+                                                  <div class="btn-group btn-block mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="First group">
+                                                      <button type="button" class="btn  btn-secondary" ng-click="_references_comercial_onWhatsApps()" ng-class="credit._user.data._comercial_references_OnWhatsapps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                                                      <button type="button" class="btn btn-secondary" ng-click="_references_comercial_onPhone()" ng-class="credit._user.data._comercial_references_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                                                    </div>
+                                              </div>
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Telefono</label>
                                                   <p>{{(credit._user.data.rcphone || 'No Definido')}}</p>
                                               </div>
-                                              <div class="form-group col-lg-6">
+                                              <div class="form-group col-lg-4">
                                                   <label class="bold">Relación Comercial</label>
                                                   <p>{{(credit._user.data.relacion_comercial || $root.user.data.rcothers || 'No Definido')}}</p>
                                               </div>
