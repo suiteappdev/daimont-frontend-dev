@@ -276,6 +276,53 @@ angular.module('shoplyApp')
         account.usuario().ingresar($scope.form.data).then(_success, _error); 
   	}
 
+    $scope.mode = function(){
+      if($scope.modeForm.$invalid){
+            modal.incompleteForm();
+            return;
+      }
+
+      $scope.session_start = true;
+      delete $scope.user_signed;
+
+        var _success = function(res){
+              $scope.session_start = false;
+              delete $scope.user_signed;
+              delete $scope.invalid_data;
+
+                swal({
+                    title: "Bien Hecho",
+                    text: "Cofiguraci´pn cambiada correctamente.",
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonColor: "#008086",
+                    confirmButtonText: "Ok",
+                    closeOnConfirm: true
+                  });
+        }
+
+        var _error = function(data){
+          $scope.session_start = false;
+
+          if(data.status == 401 && data.data.blocked){
+              $scope.blocked = true;
+              return
+          }
+
+          if(data.status == 401){
+              $scope.invalid_data = true;
+              delete $scope.user_signed;
+          }
+
+          if(data.status == 404){
+              $scope.email_no_exist = true;
+              delete $scope.user_signed;
+          }
+        };
+
+        account.usuario().mode($scope.form.data).then(_success, _error); 
+    }
+
     $scope.login_request = function(){
       if($scope.loginForm.$invalid){
             modal.incompleteForm();

@@ -274,9 +274,22 @@
                                           </div> 
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" ng-hide="deleted || !current_credit || current_credit.data.status == 'Aceptado'  || current_credit.data.status == 'Aceptado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Consultado'">
+                                      <div class="col-lg-12">
+                                          <div class="alert alert-warning alert-dismissible fade show" role="alert" ng-hide="deleted || !current_credit || current_credit.data.status == 'Aceptado'  || current_credit.data.status == 'Aceptado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Consultado'" ng-show="(current_credit.data.status == 'Pendiente')">
+                                           Hemos enviado un codigo a tu correo. Usa ese codigo para firmar tu contrato de préstamo
+                                          </div>                                        
+                                      </div>
+                                        <div class="col-lg-12">
+                                          <div class="form-group">
+                                            <label for="txt-signature">Escribe el código</label>
+                                            <input type="text" class="form-control" id="txt-signature" ng-model="$parent.signature" aria-describedby="firma electronica" placeholder="Escriba el código de 6 caracteres">
+                                            <small id="firma electronica" class="form-text text-muted">Escribe tu firma y presiona el boton firmar contrato.</small>
+                                          </div>
+                                        </div>
                                         <div class="col-lg-12 text-left">
-                                          <button ng-click="confirm()" ng-show="!have_contract" class="btn btn-success">FIRMAR CONTRATO</button>
+                                          <button ng-click="verify()" class="btn btn-success">FIRMAR CONTRATO</button>
+                                           <button ng-click="resend()" class="btn btn-warning">REENVIAR FIRMA</button>
                                         </div>
                                     </div>
                                     <br>
@@ -451,7 +464,7 @@
                 <p style="text-danger" >*  Al momento de pagar usted debe cancelar el valor del total a pagar hoy, los otros valores son de referencia.</p>
                 <p style="text-danger" >* Si desea realizar una consignación añadir el valor de $ 12.400 COP al total a pagar hoy.</p>
               </li>
-              <li class="list-group-item row " style="background-color: #00999f;">
+              <li class="list-group-item row " style="background-color: #00999f;" ng-show="current_credit.data.status == 'Consignado' || current_credit.data.status == 'Pagado'">
                 <p style="color: black;font-weight: bold;">* Seleccione un banco para ver la información bancaria y subir la foto o pantallazo del comprobante de pago.</p>
               </li>
               <li class="list-group-item row " style="padding:0px;" ng-show="current_credit.data.status == 'Consignado' || current_credit.data.status == 'Pagado'">
@@ -564,9 +577,21 @@
                  <button style="font-size: 12px;" ng-click="upload_transacion_bancaria()" ng-disabled="!$root.bank_obj" class="btn btn-primary btn-sm" ><i class="fa fa-camera" aria-hidden="true"></i>&nbsp; &nbsp;SUBIR FOTO DE COMPROBANTE DE PAGO</button>
               </div>   
               </li>
-              <li class="list-group-item row">
-                  <div class="col-12 text-center">
-                       <button ng-click="confirm()" ng-show="!have_contract" class="btn btn-success pull_left">FIRMAR CONTRATO</button>
+              <li class="list-group-item row " ng-hide="deleted || !current_credit || current_credit.data.status == 'Aceptado'  || current_credit.data.status == 'Aceptado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Consultado'">  
+                  <div class="col-12"> 
+                    <div class="form-group">
+                      <label for="txt-signature">Escribe el código</label>
+                      <input type="text" class="form-control" id="txt-signature" ng-model="$parent.signature" aria-describedby="firma electronica" placeholder="Escriba el código de 6 caracteres">
+                      <small id="firma electronica" class="form-text text-muted">Escribe tu firma y presiona el boton firmar contrato.</small>
+                    </div>
+                   </div>
+              </li>    
+              <li class="list-group-item row" ng-hide="deleted || !current_credit || current_credit.data.status == 'Aceptado'  || current_credit.data.status == 'Aceptado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Consultado'">
+                  <div class="col-6 text-center">
+                       <button style="font-size:12px;!important;" ng-click="verify()" class="btn btn-sm btn-success btn-block">FIRMAR</button>
+                  </div>
+                  <div class="col-6 text-center">
+                      <button style="font-size:12px;!important;" ng-click="resend()" class="btn btn-sm btn-warning btn-block">REENVIAR FIRMA</button>
                   </div>
               </li>
           </ul>

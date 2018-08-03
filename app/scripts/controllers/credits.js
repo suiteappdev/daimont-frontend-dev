@@ -70,7 +70,6 @@ angular.module('shoplyApp')
             }else if($stateParams.status == 'pendiente'){
                 api.credits().add('pendiente').get().success(function(res){
                       $scope.records = res || []
-                      $rootScope.result_length_preaprobado = $scope.records.length;
                       $scope.Records  = true;
                 }); 
             }else if($stateParams.status == 'consignado'){
@@ -168,28 +167,55 @@ angular.module('shoplyApp')
       });
     }
 
+
+    $scope.preventive = function(){
+      this.record.data._preventive = this.record.data._preventive ? false : true;
+      var _record = this.record;
+
+      if(_record.data._preventive){
+           modal.confirm({
+                   closeOnConfirm : true,
+                   title: "Está Seguro?",
+                   text: "confirmas que deseas enviar la notificación de prevención de pago ?",
+                   confirmButtonColor: "#008086",
+                   type: "success" },
+                   function(isConfirm){ 
+                       if (isConfirm) {
+                            api.credits().add("notify-preventive/" + _record._id + "/enable").put().success(function(res){
+                              console.log("notify-preventive", true);
+                            });
+
+                       }
+            });   
+      }else{
+          api.credits().add("notify-preventive/" + _record._id + "/disabled").put().success(function(res){
+            console.log("notify-preventive", false);
+          });
+      }
+    }
+
     $scope._request_onWhatsApps = function(){
-      this.record._user.data._request_onWhatsApps = this.record._user.data._request_onWhatsApps ? false : true;
-      if(this.record._user.data._request_onWhatsApps){
-          api.credits().add("request/whatsapp/" + this.record._user._id + "/enable").put().success(function(res){
+      this.record.data._request_onWhatsApps = this.record.data._request_onWhatsApps ? false : true;
+      if(this.record.data._request_onWhatsApps){
+          api.credits().add("request/whatsapp/" + this.record._id + "/enable").put().success(function(res){
             console.log("whatapp", true);
           });
       }else{
-          api.credits().add("request/whatsapp/" + this.record._user._id + "/disabled").put().success(function(res){
+          api.credits().add("request/whatsapp/" + this.record._id + "/disabled").put().success(function(res){
             console.log("whatapp", false);
           });
       }
     }
 
     $scope._request_onPhone = function(){
-      this.record._user.data._request_onPhone = this.record._user.data._request_onPhone ? false : true;
+      this.record.data._request_onPhone = this.record.data._request_onPhone ? false : true;
 
-      if(this.record._user.data._request_onPhone){
-          api.credits().add("request/phone/" + this.record._user._id + "/enable").put().success(function(res){
+      if(this.record.data._request_onPhone){
+          api.credits().add("request/phone/" + this.record._id + "/enable").put().success(function(res){
 
           });
       }else{
-          api.credits().add("request/phone/" + this.record._user._id + "/disabled").put().success(function(res){
+          api.credits().add("request/phone/" + this.record._id + "/disabled").put().success(function(res){
 
           });
       }
@@ -197,15 +223,15 @@ angular.module('shoplyApp')
     }
 
     $scope._request_onEmail = function(){
-      this.record._user.data._request_onEmail = this.record._user.data._request_onEmail ? false : true;
+      this.record.data._request_onEmail = this.record.data._request_onEmail ? false : true;
       
-      if(this.record._user.data._request_onEmail){
-          api.credits().add("request/email/" + this.record._user._id + "/enable").put().success(function(res){
+      if(this.record.data._request_onEmail){
+          api.credits().add("request/email/" + this.record._id + "/enable").put().success(function(res){
 
 
           });
       }else{
-          api.credits().add("request/email/" + this.record._user._id + "/disabled").put().success(function(res){
+          api.credits().add("request/email/" + this.record._id + "/disabled").put().success(function(res){
           
 
           });
@@ -295,27 +321,27 @@ angular.module('shoplyApp')
 
 
   $scope._payment_onWhatsApps = function(){
-      this.record._user.data._payment_onWhatsApps = this.record._user.data._payment_onWhatsApps ? false : true;
-      if(this.record._user.data._payment_onWhatsApps){
-          api.credits().add("payment/whatsapp/" + this.record._user._id + "/enable").put().success(function(res){
+      this.record.data._payment_onWhatsApps = this.record.data._payment_onWhatsApps ? false : true;
+      if(this.record.data._payment_onWhatsApps){
+          api.credits().add("payment/whatsapp/" + this.record._id + "/enable").put().success(function(res){
             console.log("whatapp", true);
           });
       }else{
-          api.credits().add("payment/whatsapp/" + this.record._user._id + "/disabled").put().success(function(res){
+          api.credits().add("payment/whatsapp/" + this.record._id + "/disabled").put().success(function(res){
             console.log("whatapp", false);
           });
       }
     }
 
     $scope._payment_onPhone = function(){
-      this.record._user.data._payment_onPhone = this.record._user.data._payment_onPhone ? false : true;
+      this.record.data._payment_onPhone = this.record.data._payment_onPhone ? false : true;
 
-      if(this.record._user.data._payment_onPhone){
-          api.credits().add("payment/phone/" + this.record._user._id + "/enable").put().success(function(res){
+      if(this.record.data._payment_onPhone){
+          api.credits().add("payment/phone/" + this.record._id + "/enable").put().success(function(res){
 
           });
       }else{
-          api.credits().add("payment/phone/" + this.record._user._id + "/disabled").put().success(function(res){
+          api.credits().add("payment/phone/" + this.record._id + "/disabled").put().success(function(res){
 
           });
       }
@@ -323,15 +349,15 @@ angular.module('shoplyApp')
     }
 
     $scope._payment_onEmail = function(){
-      this.record._user.data._payment_onEmail = this.record._user.data._payment_onEmail ? false : true;
+      this.record.data._payment_onEmail = this.record.data._payment_onEmail ? false : true;
       
-      if(this.record._user.data._payment_onEmail){
-          api.credits().add("payment/email/" + this.record._user._id + "/enable").put().success(function(res){
+      if(this.record.data._payment_onEmail){
+          api.credits().add("payment/email/" + this.record._id + "/enable").put().success(function(res){
 
 
           });
       }else{
-          api.credits().add("payment/email/" + this.record._user._id + "/disabled").put().success(function(res){
+          api.credits().add("payment/email/" + this.record._id + "/disabled").put().success(function(res){
           
 
           });

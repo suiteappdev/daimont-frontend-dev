@@ -30,7 +30,7 @@
                 <li class="nav-item" ui-sref-active="active" ng-show="$root.user && $root.user.type == 'ADMINISTRATOR' || $root.user.type == 'SUPERVISOR'">
                     <a class="nav-link" href="#/credits" ui-sref="credits({status : 'preventivo'})">
                         <p>Cobro preventivo</p>
-                         <span class="badge badge-success" ng-show="result_length > 0">{{result_length_preventivo}}</span>
+                         <span class="badge badge-success" ng-show="result_length_preventivo > 0">{{result_length_preventivo}}</span>
                     </a>
                 </li>
                 <li class="nav-item" ui-sref-active="active" ng-show="$root.user && $root.user.type == 'ADMINISTRATOR' || $root.user.type == 'SUPERVISOR'">
@@ -142,11 +142,12 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#/dashboard" ui-sref="dashboard()" ng-hide="$root.user.type =='ADMINISTRATOR' || !$root.user.data.updated">Mi préstamo</a>
                              <a class="dropdown-item" href="#/payments" ui-sref="payments()" ng-show="$root.user.type =='ADMINISTRATOR'">Pagos</a>
-                             <a class="dropdown-item" href="#/clients" ui-sref="administrators()" ng-show="$root.user.type =='ADMINISTRATOR'">Administradores</a>
+                                                       <a class="dropdown-item" href="#/clients" ui-sref="administrators()" ng-show="$root.user.type =='ADMINISTRATOR'">Administradores</a>
                             <a class="dropdown-item" href="#/credits" ui-sref="credits()" ng-show="$root.user.type =='ADMINISTRATOR'">Solicitudes de préstamos</a>
                             <a class="dropdown-item" href="#/recover" ng-hide="$root.user.data._provider == 'FACEBOOK'" ng-click="recover()" >Cambiar contraseña</a>
+                            <a class="dropdown-item" ng-show="$root.user.type =='ADMINISTRATOR'"><button class="btn btn-sm btn-block" ng-class="$root._online ? 'btn-danger' : 'btn-success'"  ng-click="offlineMode()">{{$root._online ? 'Offline' : 'Online'}}</button></a>
                             <a class="dropdown-item" href="#" ng-click="logout()" >Salir</a>
-                          </div>
+                          </div
                           </a>                   
                   </div>
                 </div>

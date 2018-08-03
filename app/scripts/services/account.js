@@ -31,6 +31,27 @@ angular.module('shoplyApp')
 
               return async.promise;
           },
+          mode : function(data){
+              var async = $q.defer();
+
+                $http.post(constants.base_url + 'mode', data)
+                .success(function(data, status, headers, config) {
+                    async.resolve(data);
+                  })
+                .error(function(data, status, headers, config) {
+                    var response = {
+                      data : data,
+                      status : status,
+                      headers : headers,
+                      config : config
+                    }
+
+                    async.reject(response);
+                  });
+
+              return async.promise;
+          }
+          ,
 
           register : function(data){
               var async = $q.defer();

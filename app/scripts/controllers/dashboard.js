@@ -272,6 +272,51 @@ angular.module('shoplyApp')
       }
     }
 
+    $scope.resend = function(){
+        var data = {};
+        data._user = $rootScope.user._id;
+        data._credit = $scope.current_credit._id;
+
+        api.contracts().post(data).success(function(res){
+            if(res){
+                swal("Firma enviada!", "Hemos enviado una firma electrónica a tu correo, usa el código de 6 caracteres para firmar tu contrato de préstamo", "success");
+            }
+        });
+    }
+
+    $scope.verify = function(){
+        if(!$scope.signature){
+          swal("Error!", "Por favor escribe la firma electrónica", "warning");
+          return;
+        }
+
+          api.contracts().add("verify/" + $scope.signature).get().success(function(res){
+            if(res){
+                  if(res.length == 0 ){
+                    swal("Error!", "La firma proporcionada es incorrecta", "warning")
+                  }else{
+                        $scope.current_credit._contract = res._id;
+                        $scope.current_credit.data.status = 'Firmado';
+
+                        api.credits($scope.current_credit._id).put($scope.current_credit).success(function(response){
+                            if(response){
+                                swal("Contrato Firmado!", "Usted ha firmado correctamente. Su solicitud de crédito sera revisada lo mas pronto posible, de ser aprobado el crédito, se realizara el desombolso en 12 horas hábiles, de ser rechazado su crédito los contratos se anulan y puede volver a solicitar un crédito nuevamente  en 60 días", "success")
+                                $scope.isNew = true;
+                                $rootScope.hide_note = true;
+                                $rootScope.signed = true;
+
+                                delete $rootScope.bank_selected;
+                                delete $rootScope.bank_obj;
+                                
+                                $scope.load();
+                                window.scrollTo(0, 0);
+                            }
+                        });
+                  }
+            }
+          });
+    }
+
     $scope.confirm = function(){
         var data = {};
         data._user = $rootScope.user._id;

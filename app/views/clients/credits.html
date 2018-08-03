@@ -55,19 +55,23 @@
                                   <th scope="row"><a href="#" href="#" ui-sref="detail({credit :  recordcredit._id})"  >{{recordcredit.data.id}}</a></th>
                                   <td>{{recordcredit.data.amount[0] | currency:"$ ":0}}</td>
                                   <td>{{recordcredit.data.interestsDays | currency:"$ ":0}}</td>
-                                  <td>{{(recordcredit._contract.createdAt   | moment: 'format': 'MMMM DD YYYY').toUpperCase()}}</td>
+                                  <td>{{( recordcredit._contract.createdAt || recordcredit.createdAt   | moment: 'format': 'MMMM DD YYYY').toUpperCase()}}</td>
                                   <td>{{((recordcredit.data.deposited_time || recordcredit.data.deposited_time_server)  ?  (recordcredit.data.deposited_time_server || recordcredit.data.deposited_time | moment: 'format': 'MMMM DD YYYY')  : 'No Definida' ).toUpperCase()}}</td>
-                                  <td>  <span class="badge badge-default" ng-show="recordcredit.data.status == 'Pendiente'">PENDIENTE POR FIRMAR</span>
-                                     <span class="badge badge-primary" ng-show="recordcredit.data.status == 'Aceptado'">APROBADO</span>
-                                     <span class="badge badge-primary" ng-show="recordcredit.data.status == 'Firmado'">FIRMADO</span>
-                                     <span class="badge badge-primary" ng-show="recordcredit.data.status == 'Pagado'">PAGADO</span>
-                                     <span class="badge badge-success" ng-show="recordcredit.data.status == 'Consignado'">CONSIGNADO</span>
-                                     <span class="badge badge-success" ng-show="recordcredit.data.status == 'Finalizado'">FINALIZADO</span>
-                                     <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Rechazado'">RECHAZADO</span>
-                                      <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Morosos'">MOROSOS</span>
-                                      <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Fraude'">FRAUDE</span>
-                                       <span class="badge badge-warning" ng-show="recordcredit.data.status == 'Dificil_recaudo'">DIFICIL RECAUDO</span>
-                                     <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Anulado'">ANULADO</span></td>
+                                  <td>  
+                                    <span class="badge badge-default" ng-show="recordcredit.data.status == 'Pendiente'">PENDIENTE POR FIRMAR</span>
+                                    <span class="badge badge-primary" ng-show="recordcredit.data.status == 'Aceptado'">APROBADO</span>
+                                    <span class="badge badge-primary" ng-show="recordcredit.data.status == 'Firmado'">FIRMADO</span>
+                                    <span class="badge badge-primary" ng-show="recordcredit.data.status == 'Pagado'">PAGADO</span>
+                                    <span class="badge badge-success" ng-show="recordcredit.data.status == 'Consignado'">CONSIGNADO</span>
+                                    <span class="badge badge-success" ng-show="recordcredit.data.status == 'Preaprobado'">PRE-APROBADO</span>
+                                    <span class="badge badge-success" ng-show="recordcredit.data.status == 'Finalizado'">FINALIZADO</span>
+                                    <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Rechazado'">RECHAZADO</span>
+                                    <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Fraude'">FRAUDE</span>
+                                    <span class="badge badge-warning" ng-show="recordcredit.data.status == 'Dificil_recaudo'">DIFICIL RECAUDO</span>
+                                    <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Anulado'">ANULADO</span>
+                                    <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Consultado'">CONSULTADO</span>
+                                     <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Morosos'">MOROSOS</span>
+                                     </td>
                                   <td>{{recordcredit._payment.data.total_payment || paymentForm.total_payment || record.data.total_payment | currency:"$ ":0}}</td>
                                   <td><button ng-disabled="recordcredit.data.status == 'Pendiente'" class="btn btn-block btn-primary btn-sm" ng-click="contract()">Contrato</button></td>
 

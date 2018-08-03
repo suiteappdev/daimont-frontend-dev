@@ -90,9 +90,9 @@
           <tr>
             <th style="display:none;" ></th>
             <th ng-show="params.status == 'preventivo'">Visto</th>
-            <th ng-show="params.status == 'firmado' || params.status == 'aceptado' || params.status == 'consignado' || params.status == 'finalizado' || params.status == 'morosos' || params.status == 'pendiente_48' || params.status == 'preaprobado' || params.status == 'preventivo'" >Créditos</th>
+            <th ng-show="params.status == 'firmado' || params.status == 'aceptado' || params.status == 'consignado' || params.status == 'finalizado' || params.status == 'morosos' || params.status == 'pendiente_48' || params.status == 'pendiente' || params.status == 'preaprobado' || params.status == 'preventivo'" >Créditos</th>
             <th>Cliente</th>
-            <th ng-show="params.status == 'pendiente_48'">Firma</th>
+            <th ng-show="params.status == 'pendiente_48' || params.status == 'pendiente'">Firma</th>
             <th>Estado</th>
             <th ng-hide="params.status == 'rechazado' || params.status == 'aceptado' || params.status == 'anulado'" >{{params.status == 'consignado' || params.status == 'finalizado' || params.status == 'morosos' ? 'Fecha de Consignación' : 'Fecha de solicitud'}}</th>
             <th ng-show="params.status == 'rechazado'">Fecha de rechazo</th>
@@ -122,11 +122,11 @@
             <td style="display:none;"  ng-click="$event.stopPropagation()">
                 <input ng-hide="record.data.status == 'Rechazado' || record.data.status == 'Anulado'" id="checkbox1" type="checkbox" ng-model="record.add" ng-change="add_to_task()">
             </td>
-            <td ng-show="params.status == 'firmado' || params.status == 'consignado' || params.status == 'aceptado' || params.status == 'finalizado' || params.status == 'morosos' || params.status == 'pendiente_48' || params.status == 'preaprobado' || params.status == 'preventivo'">{{record.data.count == 0 ? 1 : (record.data.count + 1)}}</td>
+            <td ng-show="params.status == 'firmado' || params.status == 'pendiente' || params.status == 'consignado' || params.status == 'aceptado' || params.status == 'finalizado' || params.status == 'morosos' || params.status == 'pendiente_48' || params.status == 'preaprobado' || params.status == 'preventivo'">{{record.data.count == 0 ? 1 : (record.data.count + 1)}}</td>
             <td class="relative" ng-init="setCriteriaField()"><a style="margin-left:3px;" href="#" ui-sref="detail({ credit : record._id})" >{{(record._user.name + ' ' + record._user.data.second_name + ' ' + record._user.last_name + ' ' + record._user.data.second_last_name).toUpperCase()}}</a>
               <span ng-show="record.data.rejected > 0" class="badge badge-danger has_rejected">{{record.data.rejected}}</span>
             </td>
-            <td ng-show="params.status == 'pendiente_48'"> {{record.data.signature.data.contract || 'sin firma'}}</td>
+            <td ng-show="params.status == 'pendiente_48' || params.status == 'pendiente'"> {{record.data.signature.data.contract || 'sin firma'}}</td>
             <td>
               <span class="badge badge-default" ng-show="record.data.status == 'Pendiente'">PENDIENTE POR FIRMAR</span>
               <span class="badge badge-primary" ng-show="record.data.status == 'Aceptado'">APROBADO</span>
@@ -191,16 +191,16 @@
             </div>
             <div ng-init="getFiles()" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="First group">
-                <button type="button" class="btn " ng-click="_request_onWhatsApps()"  ng-class="record._user.data._request_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
-                <button type="button" class="btn" ng-click="_request_onPhone()"  ng-class="record._user.data._request_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                <button type="button" class="btn " ng-click="_request_onWhatsApps()"  ng-class="record.data._request_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                <button type="button" class="btn" ng-click="_request_onPhone()"  ng-class="record.data._request_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
 
-                <button type="button" class="btn" ng-click="_request_onEmail()"  ng-class="record._user.data._request_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
+                <button type="button" class="btn" ng-click="_request_onEmail()"  ng-class="record.data._request_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
               </div>
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="Second group">
-                <button type="button" class="btn " ng-click="_payment_onWhatsApps()"  ng-class="record._user.data._payment_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
-                <button type="button" class="btn" ng-click="_payment_onPhone()"  ng-class="record._user.data._payment_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                <button type="button" class="btn " ng-click="_payment_onWhatsApps()"  ng-class="record.data._payment_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                <button type="button" class="btn" ng-click="_payment_onPhone()"  ng-class="record.data._payment_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
 
-                <button type="button" class="btn" ng-click="_payment_onEmail()"  ng-class="record._user.data._payment_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
+                <button type="button" class="btn" ng-click="_payment_onEmail()"  ng-class="record.data._payment_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
               </div>
 
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="Second group">
@@ -215,7 +215,7 @@
               </div>
 
               <div class="btn-group btn-group-sm mr-2" style="margin-top:5px;" role="group" aria-label="Third group">
-                <button type="button" ng-class="record._user.data._payment_onNotice ? 'btn-success' : 'btn-secondary'" class="btn btn-warning" ng-click="preEmail()" ><i class="fa fa-bullhorn"></i></button>
+                <button type="button" ng-class="record.data._preventive ? 'btn-success' : 'btn-default'" class="btn" ng-click="preventive()" ><i class="fa fa-bullhorn"></i></button>
               </div>
             </div>
             </td>
@@ -296,16 +296,16 @@
             </div>
             <div ng-init="getFiles()" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="First group">
-                <button type="button" class="btn " ng-click="_request_onWhatsApps()"  ng-class="record._user.data._request_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
-                <button type="button" class="btn" ng-click="_request_onPhone()"  ng-class="record._user.data._request_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                <button type="button" class="btn " ng-click="_request_onWhatsApps()"  ng-class="record.data._request_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                <button type="button" class="btn" ng-click="_request_onPhone()"  ng-class="record.data._request_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
 
-                <button type="button" class="btn" ng-click="_request_onEmail()"  ng-class="record._user.data._request_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
+                <button type="button" class="btn" ng-click="_request_onEmail()"  ng-class="record.data._request_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
               </div>
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="Second group">
-                <button type="button" class="btn " ng-click="_payment_onWhatsApps()"  ng-class="record._user.data._payment_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
-                <button type="button" class="btn" ng-click="_payment_onPhone()"  ng-class="record._user.data._payment_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
+                <button type="button" class="btn " ng-click="_payment_onWhatsApps()"  ng-class="record.data._payment_onWhatsApps ? 'btn-success' : 'btn-secondary'"><i class="fa fa-whatsapp"></i></button>
+                <button type="button" class="btn" ng-click="_payment_onPhone()"  ng-class="record.data._payment_onPhone ? 'btn-success' : 'btn-secondary'"><i class="fa fa-mobile"></i></button>
 
-                <button type="button" class="btn" ng-click="_payment_onEmail()"  ng-class="record._user.data._payment_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
+                <button type="button" class="btn" ng-click="_payment_onEmail()"  ng-class="record.data._payment_onEmail ? 'btn-success' : 'btn-secondary'"><i class="fa fa-at"></i></button>
               </div>
 
               <div class="btn-group mr-2 btn-group-sm" style="margin-top:5px;" role="group" aria-label="Second group">
@@ -316,11 +316,11 @@
               </div>
 
               <div class="btn-group btn-group-sm mr-2" style="margin-top:5px;" role="group" aria-label="Third group">
-                <button type="button" ng-class="record._user.data._payment_onNotice ? 'btn-success' : 'btn-secondary'" class="btn btn-secondary" ng-click="preEmail()" ><i class="fa fa-exclamation-triangle"></i></button>
+                <button type="button" ng-class="record.data._preventive ? 'btn-success' : 'btn-secondary'" class="btn btn-secondary" ng-click="preEmail()" ><i class="fa fa-exclamation-triangle"></i></button>
               </div>
 
               <div class="btn-group btn-group-sm mr-2" style="margin-top:5px;" role="group" aria-label="Third group">
-                <button type="button" ng-class="record._user.data._payment_onNotice ? 'btn-success' : 'btn-secondary'" class="btn btn-warning" ng-click="preEmail()" ><i class="fa fa-bullhorn"></i></button>
+                <button type="button" ng-class="record.data._preventive ? 'btn-success' : 'btn-secondary'" class="btn btn-warning" ng-click="preventive()" ><i class="fa fa-bullhorn"></i></button>
               </div>
             </div>
             </td>

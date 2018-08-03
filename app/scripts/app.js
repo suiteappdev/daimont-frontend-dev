@@ -117,6 +117,20 @@ angular
                 pageTitle: 'Inicio'
               }
           })
+          .state('offline', {
+              url: '/offline',
+              templateUrl: 'views/offline/offline.html',
+              data: {
+                pageTitle: 'Sitio en Mantenimiento'
+              }
+          })
+          .state('mode', {
+              url: '/mode',
+              templateUrl: 'views/mode/mode.html',
+              data: {
+                pageTitle: 'Modo'
+              }
+          })
           .state('empezar', {
               url: '/empezar',
               templateUrl: 'views/empezar/empezar.html',
@@ -460,14 +474,66 @@ angular
                   pageTitle: 'Mi Prestamo'
                 }
           });
-  }).run(["$rootScope", "constants", "storage", "$state","sounds", "api", "$window", "$http", "$timeout", "$location", function($rootScope, constants, storage, $state, sounds, api, $window, $http, $timeout, $location){
-
+  }).run(["$rootScope", "constants", "storage", "$state","sounds", "api", "$window", "$http", "$timeout", "$location", "modal", "$firebaseObject", "$firebaseArray",   function($rootScope, constants, storage, $state, sounds, api, $window, $http, $timeout, $location, modal, $firebaseObject, $firebaseArray){
       $rootScope.logout = function(){
             window.localStorage.clear();
             delete $rootScope.isLogged;
             window.location.reload();
-       }
-  
+      }
+
+      $rootScope.offlineMode = function(){
+          if($rootScope._online){
+             modal.confirm({
+                     closeOnConfirm : true,
+                     title: "Está Seguro?",
+                     text: "¿quieres poner el sitio en modo mantenimiento?",
+                     confirmButtonColor: "#008086",
+                     type: "success" },
+                     function(isConfirm){ 
+                         if (isConfirm) {
+                            $rootScope._online = $rootScope._online ? false : true;
+                            api.system().add(($rootScope.system ? ($rootScope.system._id) : "")).put({ status : $rootScope._online }).success(function(res){
+                              if(res.ok == 1){
+                                  swal({
+                                      title: "Bien Hecho",
+                                      text: "La pagina se encuentra en modo mantenimiento.",
+                                      type: "success",
+                                      showCancelButton: false,
+                                      confirmButtonColor: "#008086",
+                                      confirmButtonText: "Ok",
+                                      closeOnConfirm: true
+                                    });
+                              }
+                            });
+                          }
+                     });
+            }else{
+             modal.confirm({
+                     closeOnConfirm : true,
+                     title: "Está Seguro?",
+                     text: "¿quieres poner el sitio online?",
+                     confirmButtonColor: "#008086",
+                     type: "success" },
+                     function(isConfirm){ 
+                         if (isConfirm) {
+                            $rootScope._online = $rootScope._online ? false : true;
+                            api.system().add(($rootScope.system ? ($rootScope.system._id) : "")).put({ status : $rootScope._online }).success(function(res){
+                              if(res.ok == 1){
+                                  swal({
+                                      title: "Bien Hecho",
+                                      text: "La pagina se encuentra en linea.",
+                                      type: "success",
+                                      showCancelButton: false,
+                                      confirmButtonColor: "#008086",
+                                      confirmButtonText: "Ok",
+                                      closeOnConfirm: true
+                                    });
+                              }
+                            });
+                          }
+                     });
+            }
+    }
 
         var forceSSL = function () {
           if ($location.protocol() !== 'https') {
@@ -475,7 +541,7 @@ angular
           }
         };
 
-        forceSSL();
+        //forceSSL();
 
         $rootScope.currency = constants.currency;
         $rootScope.base = constants.uploadFilesUrl;
@@ -486,6 +552,7 @@ angular
         $rootScope.online = navigator.onLine;
         $rootScope.loader = false;
         $rootScope.loaderText = 'cargando...';
+
 
 
         if((storage.get('access_token') || storage.get('token')) && !storage.get('user')){
@@ -572,6 +639,16 @@ angular
                     $rootScope.$apply();
                 }); 
 
+                window.socket.on('NEW_UPDATED_TO_ADMIN', function(data){
+                    toastr.options.onclick = function() { 
+                        $state.go('edit_client', { client : data._id});
+                    }
+
+                    toastr.success('Nueva actualización de datos '+ data.email);
+                    sounds.onRequest();
+                    $rootScope.$apply();
+                });  
+
                 window.socket.on('NEW_PAYMENT_TO_ADMIN', function(data){
                     toastr.success('Nuevo Pago');
                     $rootScope.payments_records.push(data);
@@ -586,6 +663,24 @@ angular
         }
 
       $rootScope.$on('$stateChangeStart', function(event, nextRoute, toParams, fromState, fromParams){
+          api.system().get().success(function(res){
+            $rootScope.system = res
+            $rootScope._online = res.status;
+
+            if(!$rootScope.system.status){
+                  if(!$rootScope.user && nextRoute.name != 'mode'){
+                       event.preventDefault();
+                      $state.transitionTo('offline');
+                    return;
+                  }else if( nextRoute.name != 'mode'){
+                     $state.transitionTo(nextRoute.name);
+                  }else if($rootScope.user && $rootScope.user.type == "ADMINISTRATOR"){
+                      event.preventDefault();
+                      $state.transitionTo(nextRoute.name);
+                  }
+            }
+          });
+
             if((nextRoute.name  == 'credits'  || nextRoute.name  == 'payments' || nextRoute.name  == 'payments-detail' || nextRoute.name  == 'detail' || nextRoute.name == 'administrators') && ($rootScope.user && $rootScope.user.type == 'CLIENT' || !$rootScope.user.type == 'SUPERVISOR')){
                   nextRoute.data.pageTitle = fromState.data.pageTitle;
                   event.preventDefault();

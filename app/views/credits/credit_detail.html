@@ -17,6 +17,9 @@
                <button type="button" ng-click="fraude()" class="btn btn-sm btn-danger btn-create" ng-disabled="$root.user.type == 'SUPERVISOR'">Fraude</button> 
                <button type="button" ng-click="dificil_recaudo()" class="btn btn-sm btn-warning btn-create" ng-disabled="$root.user.type == 'SUPERVISOR'">Dificil Recaudo</button>   
             </div>
+            <div ng-show="credit.data.status == 'Pendiente'">
+              <button type="button" ng-click="nulled()" class="btn btn-sm btn-danger btn-create" ng-disabled="$root.user.type == 'SUPERVISOR'">Anular</button>
+            </div>
             <div ng-hide="
                 credit.data.status == 'Consignado' || 
                 credit._payment.length > 0 ||
@@ -203,7 +206,7 @@
                                               </div>
                                               <div class="form-group col-lg-4">
                                                   <label class="bold">Parentesco</label>
-                                                  <p>{{(credit._user.data.parentesco || $root.user.data.rfother || 'No Definido')}}</p>
+                                                  <p>{{((credit._user.data.parentesco == 'Otros') ? credit._user.data.rfother : credit._user.data.parentesco) || 'no definido'}}</p>
                                               </div>
                                               <div class="col-lg-12">
                                                 <h3>Referencias Comerciales</h3>
@@ -229,7 +232,7 @@
                                               </div>
                                               <div class="form-group col-lg-4">
                                                   <label class="bold">Relación Comercial</label>
-                                                  <p>{{(credit._user.data.relacion_comercial || $root.user.data.rcothers || 'No Definido')}}</p>
+                                                  <p>{{((credit._user.data.relacion_comercial == 'Otros') ? credit._user.data.rcothers : credit._user.data.relacion_comercial) || 'no definido'}}</p>
                                               </div>
                                           </div>                      
                                           </div>
