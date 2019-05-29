@@ -60,6 +60,16 @@ angular.module('shoplyApp')
 
     
     $scope.load = function(){
+
+      if( $state.current.name == 'preventivos'){
+          api.credits().add('preventivo').get().success(function(res){
+                $scope.records = res || []
+                $scope.Records  = true;
+          }); 
+
+          return;
+      }
+
       if($stateParams.status){
           if($stateParams.status == 'firmado'){
               api.credits().add('firmado').get().success(function(res){
@@ -167,6 +177,121 @@ angular.module('shoplyApp')
       });
     }
 
+    $scope.$watch('monto', function(n, o){
+      if(n){
+              $scope.credit.data.amount[0] = $scope.monto;
+              $scope.credit.data.interests = ($scope.monto * (2.18831289 / 100));
+              $scope.credit.data.system_quote = ($scope.form.data.finance_quoteFixed + $scope.form.data.finance_quoteChange * $scope.credit.data.days[0]);
+              $scope.credit.data.interestsPeerDays = ( angular.copy($scope.credit.data.interests) / 30 );
+              $scope.credit.data.interestsDays = ($scope.credit.data.interestsPeerDays) * $scope.credit.data.days[0];
+              $scope.credit.data.iva = $scope.credit.data.system_quote  * (19 / 100);
+
+              $scope.credit.data.system_quotePeerDays = (angular.copy($scope.form.data.system_quote) / 30 ); 
+              $scope.credit.data.system_quoteDays = ($scope.form.data.system_quotePeerDays) * ($scope.credit.data.days[0]);
+
+              $scope.form.data.ivaPeerdays = (angular.copy($scope.credit.data.iva) / 30);
+              $scope.form.data.ivaDays = ($scope.form.data.finance_quote + $scope.credit.data.system_quoteDays || $scope.credit.data.system_quote ) * (19 / 100);
+              
+              $scope.credit.data.total_payment = ($scope.monto) + ($scope.credit.data.interestsDays || $scope.credit.data.interests) + ($scope.credit.data.system_quote || $scope.credit.data.system_quote || 0) + ($scope.credit.data.ivaDays || $scope.credit.data.iva || 0) + ( $scope.form.data.finance_quote || 0);
+      }
+
+      if(o){
+              $scope.credit.data.amount[0] = $scope.monto;
+              $scope.credit.data.interests = ($scope.monto * (2.18831289 / 100));
+              $scope.credit.data.system_quote = ($scope.form.data.finance_quoteFixed + $scope.form.data.finance_quoteChange * $scope.credit.data.days[0]);
+              $scope.credit.data.interestsPeerDays = ( angular.copy($scope.credit.data.interests) / 30 );
+              $scope.credit.data.interestsDays = ($scope.credit.data.interestsPeerDays) * $scope.credit.data.days[0];
+              $scope.credit.data.iva = $scope.credit.data.system_quote  * (19 / 100);
+
+              $scope.credit.data.system_quotePeerDays = (angular.copy($scope.form.data.system_quote) / 30 ); 
+              $scope.credit.data.system_quoteDays = ($scope.form.data.system_quotePeerDays) * ($scope.credit.data.days[0]);
+
+              $scope.form.data.ivaPeerdays = (angular.copy($scope.credit.data.iva) / 30);
+              $scope.form.data.ivaDays = ($scope.form.data.finance_quote + $scope.credit.data.system_quoteDays || $scope.credit.data.system_quote ) * (19 / 100);
+              
+              $scope.credit.data.total_payment = ($scope.monto) + ($scope.credit.data.interestsDays || $scope.credit.data.interests) + ($scope.credit.data.system_quote || $scope.credit.data.system_quote || 0) + ($scope.credit.data.ivaDays || $scope.credit.data.iva || 0) + ( $scope.form.data.finance_quote || 0);
+      }
+    });
+
+    $scope.changeAmount = function(){
+      $scope.credit = this.record;
+      $scope.monto = $scope.credit.data.amount[0];
+
+      window.modal = modal.show({templateUrl : 'views/credits/changeAmount.html', size:'lg', scope: this, backdrop: true, show : true, keyboard  : true}, function($scope){
+       
+       modal.confirm({
+               closeOnConfirm : true,
+               title: "Está Seguro?",
+               text: "Desea cambiar el monto de este crédito?",
+               confirmButtonColor: "#008086",
+               type: "warning" },
+               function(isConfirm){ 
+                   if (isConfirm) {
+                
+                    if( $scope.credit.data.cf){
+                        delete $scope.credit.data.cf.$id;
+                        delete $scope.credit.data.cf.$priority;
+                    }
+
+                    if( $scope.credit.data.cl){
+                        delete $scope.credit.data.cl.$id;
+                        delete $scope.credit.data.cl.$priority; 
+                    }
+                    if( $scope.credit.data.ca){
+                         delete $scope.credit.data.ca.$id;
+                        delete $scope.credit.data.ca.$priority; 
+                    }
+
+                    if( $scope.credit.data.dt){
+                        delete $scope.credit.data.dt.$id;
+                        delete $scope.credit.data.dt.$priority; 
+                    }
+
+                    if( $scope.credit.data.dt2){
+                        delete $scope.credit.data.dt2.$id;
+                        delete $scope.credit.data.dt2.$priority; 
+                    }
+
+                    if( $scope.credit.data.ce){
+                        delete $scope.credit.data.ce.$id;
+                        delete $scope.credit.data.ce.$priority; 
+                    }
+
+                    if( $scope.credit.data.ex){
+                        delete $scope.credit.data.ex.$id;
+                        delete $scope.credit.data.ex.$priority; 
+                    }
+
+                    if( $scope.credit.data.ex2){
+                        delete $scope.credit.data.ex2.$id;
+                        delete $scope.credit.data.ex2.$priority;  
+                    }
+
+                    if( $scope.credit.data.re){
+                        delete $scope.credit.data.re.$id;
+                        delete $scope.credit.data.re.$priority;  
+                    }
+                      api.credits($scope.credit._id).put($scope.credit).success(function(res){
+                        if(res){
+                            swal({
+                              title: "Bien Hecho",
+                              text: "Monto cambiado correctamente.",
+                              type: "success",
+                              showCancelButton: false,
+                              confirmButtonColor: "#008086",
+                              confirmButtonText: "Ok",
+                              closeOnConfirm: true
+                            },
+                            function(){
+                               $scope.$close();
+                            });
+                        }
+                      }); 
+                   }
+        });
+      }); 
+    }
+
 
     $scope.preventive = function(){
       this.record.data._preventive = this.record.data._preventive ? false : true;
@@ -189,6 +314,32 @@ angular.module('shoplyApp')
             });   
       }else{
           api.credits().add("notify-preventive/" + _record._id + "/disabled").put().success(function(res){
+            console.log("notify-preventive", false);
+          });
+      }
+    }
+
+    $scope.second_preventive = function(){
+      this.record.data._second_preventive = this.record.data._second_preventive ? false : true;
+      var _record = this.record;
+
+      if(_record.data._second_preventive){
+           modal.confirm({
+                   closeOnConfirm : true,
+                   title: "Está Seguro?",
+                   text: "confirmas que deseas enviar la notificación de prevención de pago ?",
+                   confirmButtonColor: "#008086",
+                   type: "success" },
+                   function(isConfirm){ 
+                       if (isConfirm) {
+                            api.credits().add("second-notify-preventive/" + _record._id + "/enable").put().success(function(res){
+                              console.log("notify-preventive", true);
+                            });
+
+                       }
+            });   
+      }else{
+          api.credits().add("second-notify-preventive/" + _record._id + "/disabled").put().success(function(res){
             console.log("notify-preventive", false);
           });
       }
@@ -476,13 +627,11 @@ angular.module('shoplyApp')
 
     $scope.setNegrita = function(){
       if(this.record.data.viewedPreventivo){
-        api.credits().add("set-viewed-preventivo/" + this.record._id).put({}).success(function(response){
+        api.credits().add("unset-viewed-preventivo/" + this.record._id).put({}).success(function(response){
             console.log("response", response);
         });  
       }else{
-        this.record.data.viewedPreventivo = false;
-
-        api.credits().add("unset-viewed-preventivo/" + this.record._id).put({}).success(function(response){
+        api.credits().add("set-viewed-preventivo/" + this.record._id).put({}).success(function(response){
             console.log("response", response);
         }); 
       }

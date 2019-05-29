@@ -257,17 +257,22 @@ angular.module('shoplyApp')
           console.log("error login", data);
           $scope.session_start = false;
 
+          if(data.status == 401 && data.data.blocked_days_to_left){
+              $scope.blocked_days_to_left = data.data.blocked_days_to_left;
+              return
+          }          
+
           if(data.status == 401 && data.data.blocked){
               $scope.blocked = true;
               return
           }
 
-          if(data.status == 401){
+           if(data.status == 401){
               $scope.invalid_data = true;
               delete $scope.user_signed;
           }
 
-          if(data.status == 404){
+           if(data.status == 404){
               $scope.email_no_exist = true;
               delete $scope.user_signed;
           }
@@ -275,53 +280,6 @@ angular.module('shoplyApp')
 
         account.usuario().ingresar($scope.form.data).then(_success, _error); 
   	}
-
-    $scope.mode = function(){
-      if($scope.modeForm.$invalid){
-            modal.incompleteForm();
-            return;
-      }
-
-      $scope.session_start = true;
-      delete $scope.user_signed;
-
-        var _success = function(res){
-              $scope.session_start = false;
-              delete $scope.user_signed;
-              delete $scope.invalid_data;
-
-                swal({
-                    title: "Bien Hecho",
-                    text: "Cofiguraci´pn cambiada correctamente.",
-                    type: "success",
-                    showCancelButton: false,
-                    confirmButtonColor: "#008086",
-                    confirmButtonText: "Ok",
-                    closeOnConfirm: true
-                  });
-        }
-
-        var _error = function(data){
-          $scope.session_start = false;
-
-          if(data.status == 401 && data.data.blocked){
-              $scope.blocked = true;
-              return
-          }
-
-          if(data.status == 401){
-              $scope.invalid_data = true;
-              delete $scope.user_signed;
-          }
-
-          if(data.status == 404){
-              $scope.email_no_exist = true;
-              delete $scope.user_signed;
-          }
-        };
-
-        account.usuario().mode($scope.form.data).then(_success, _error); 
-    }
 
     $scope.login_request = function(){
       if($scope.loginForm.$invalid){
@@ -364,4 +322,35 @@ angular.module('shoplyApp')
         storage.delete('rememberEmail');
       }
     }
+
+    $scope.offlineModeWeb = function(){
+      if($scope.modeForm.$invalid){
+            modal.incompleteForm();
+            return;
+      }
+
+       modal.confirm({
+               closeOnConfirm : true,
+               title: "Está Seguro?",
+               text: "¿quieres cambiar la disponibilidad de la web ?",
+               confirmButtonColor: "#008086",
+               type: "success" },
+               function(isConfirm){ 
+                   if (isConfirm) {
+                      api.system().add(($rootScope.system ? ($rootScope.system._id) : "")).put({ status : ($scope.form.data.mode == "Mantenimiento" ? false : true ) }).success(function(res){
+                        if(res.ok == 1){
+                            swal({
+                                title: "Bien Hecho",
+                                text: "La pagina se encuentra en linea.",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonColor: "#008086",
+                                confirmButtonText: "Ok",
+                                closeOnConfirm: true
+                              });
+                        }
+                      });
+                    }
+               });
+  } 
   });

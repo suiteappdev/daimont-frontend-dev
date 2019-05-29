@@ -21,7 +21,7 @@ angular.module('shoplyApp')
       if($stateParams.credit){
           api.credits($stateParams.credit).get().success(function(res){
                 $scope.credit = res;
-                $scope.fullname();
+                $scope.setCriteriaField();
                 var refForArray  = firebase.database().ref(res._id);
 
                 var syncObject = $firebaseObject(refForArray);
@@ -35,8 +35,8 @@ angular.module('shoplyApp')
                     });                  
                 }
 
-                if(!$scope.credit.data.viewedPreventivo){
-                    api.credits().add("set-viewed-preventivo/" + $scope.credit._id).put({}).success(function(response){
+                if($scope.credit.data.viewedPreventivo){
+                    api.credits().add("unset-viewed-preventivo/" + $scope.credit._id).put({}).success(function(response){
                         console.log("response", response);
                     });              
                 }
@@ -128,9 +128,11 @@ angular.module('shoplyApp')
     }
   }
 
-  $scope.fullname = function(){
-    $scope.credit.fullname = (($scope.credit._user.name || '') +' '+ ($scope.credit._user.data.second_name || '') +' '+ ($scope.credit._user.last_name || '') +' '+($scope.credit._user.data.second_last_name || '')).replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').toUpperCase()
-  }
+    $scope.setCriteriaField = function(){
+      if($scope.credit){
+          $scope.credit.creiteria = (($scope.credit._user.name || '') +' '+ ($scope.credit._user.data.second_name || '') +' '+ ($scope.credit._user.last_name || '') +' '+ ($scope.credit._user.data.second_last_name || '')).toString().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').replace(/\s\s/g, " ").toUpperCase();
+      }
+    }
 
  $scope.totalizePayment_30_day = function(){
       $scope.paymentForm_30_day.total_payment = (parseInt($scope.credit.data.amount[0])) + ($scope.paymentForm_30_day.interestsDays) + ($scope.paymentForm_30_day.system_quote || 0) + ($scope.paymentForm_30_day.iva || 0);
@@ -456,7 +458,7 @@ angular.module('shoplyApp')
                   $scope.credit._payment = $scope.credit._payment || [];
                   $scope.credit._payment.push(res._id);
                   $scope.credit._user = $scope.credit._user._id;
-                  $scope.credit._contract = $scope.credit._contract._id || null;
+                  $scope.credit._contract = $scope.credit._contract ? $scope.credit._contract._id : null;
 
                   if($scope.tipo_pago == "Abono"){
                       $scope.credit.data.status = 'Consignado';

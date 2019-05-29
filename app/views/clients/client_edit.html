@@ -5,10 +5,21 @@
       <ol class="breadcrumb" style="width:100%;margin-top:10px;">
         <li class="breadcrumb-item"><a href="#/clients" ui-sref="clients()">Principal</a></li>
         <li class="breadcrumb-item active">Editar Cliente <span>- {{client.name}}</span> </li>
-        <button class="btn btn-danger pull-right btn-sm" ng-show="!client.data.blocked" ng-click="blockAccount()" ng-disabled="$root.user.type == 'SUPERVISOR'" >Bloquear</button>
-        <button class="btn btn-warning pull-right btn-sm" ng-show="client.data.banned_time" ng-click="unblockCredit()" ng-disabled="$root.user.type == 'SUPERVISOR'" style="margin-right:20px;">Desbloquear préstamo</button>
+          <button class="btn btn-danger pull-right btn-sm" ng-show="!client.data.blocked" ng-click="blockAccount()" ng-disabled="$root.user.type == 'SUPERVISOR'" >Bloquear</button>
+
+          <button style="margin-right:20px;" class="btn btn-warning pull-right btn-sm" ng-show="client.data.blockedTemp" ng-click="unblockAccountTemp()" ng-disabled="$root.user.type == 'SUPERVISOR'" style="margin-right:20px;">Desbloquear temporal</button>
+          
+          <button style="margin-right:20px;"  class="btn btn-danger pull-right btn-sm" ng-show="!client.data.blockedTemp" ng-click="blockAccountTemp()" ng-disabled="$root.user.type == 'SUPERVISOR'" >Bloquear temporal</button>
+
+        
+         <button  style="margin-right:20px;" class="btn btn-success pull-right btn-sm"  ng-click="enable_cupo()" ng-disabled="$root.user.type == 'SUPERVISOR'" ng-show="client.data.cupon_updated">Activar Cupo</button>
+          
+          <button  style="margin-right:20px;" ng-show="!client.data.cupon_updated" class="btn btn-danger pull-right btn-sm"  ng-click="disable_cupo()" ng-disabled="client.type == 'SUPERVISOR'" >Desactivar Cupo</button>
+
+        <button class="btn btn-warning btn-sm" ng-show="client.data.banned_time" ng-click="unblockCredit()" ng-disabled="$root.user.type == 'SUPERVISOR'" style="margin-right:20px;">Desbloquear préstamo</button>
+
         <a style="margin-right : 20px;" ng-show="client.data.facebookId" href="http://facebook.com/{{client.data.facebookId}}" target="_blank" class="btn btn-primary pull-right btn-sm">Ver Perfil</a>
-        <button class="btn btn-warning pull-right btn-sm" ng-show="client.data.blocked" ng-click="unblockAccount()" ng-disabled="$root.user.type == 'SUPERVISOR'">Desbloquear</button>
+        <button style="margin-right : 20px;" class="btn btn-warning pull-right btn-sm" ng-show="client.data.blocked" ng-click="unblockAccount()" ng-disabled="$root.user.type == 'SUPERVISOR'">Desbloquear</button>
       </ol>
   </div>
 </div>
@@ -371,6 +382,15 @@
                                    <label class="text-muted">Correo electronico</label>
                                   <input type="text" required ng-model="client.email" class="form-control" name="email" placeholder="Correo electronico" ng-class="{ 'form-control-danger' : (profile.$submitted || profile.email.$touched) && profile.email.$invalid }" />
                               </div>                    
+                          </div>
+                          <div class="col-lg-4">
+                          <label cclass="text-muted">Contraseña</label>
+                            <div class="input-group mb-3">
+                              <input type="password" ng-model="newpwd" class="form-control" placeholder="Contraseña" aria-label="Cambiar Contraseña" aria-describedby="Contraseña">
+                              <div class="input-group-append">
+                                <button class="btn btn-primary" ng-disabled="!newpwd" ng-click="changePwd()" type="button">Cambiar</button>
+                              </div>
+                            </div>
                           </div>
                   <div class="col-lg-3 text-center">
                     <div class="form-group" style="margin-top:10px;">

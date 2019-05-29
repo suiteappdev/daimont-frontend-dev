@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('shoplyApp').controller('ClientCtrl', function ($scope, $rootScope, sweetAlert, constants, $state, modal, api, storage, $stateParams, $http, $filter) {
+angular.module('shoplyApp').controller('ClientCtrl', function ($scope, $rootScope, sweetAlert, constants, $state, modal, api, storage, $stateParams, $http, $filter, $timeout) {
   	$scope.items_tasks = [];
     $scope.Records  = false;
     $scope.records = [];
@@ -9,6 +9,8 @@ angular.module('shoplyApp').controller('ClientCtrl', function ($scope, $rootScop
     $scope.form.data = {};
     $scope.form.data.finance_quoteFixed = 12990;
     $scope.form.data.finance_quoteChange = 960;
+
+    $scope.currentPage = 1;
     $scope.items = 20;
 
     $scope.itemsConfig = {
@@ -17,7 +19,7 @@ angular.module('shoplyApp').controller('ClientCtrl', function ($scope, $rootScop
         valueField: 'value',
         labelField: 'text',
         placeholder:'Mostrar'
-    } 
+    }
 
     $scope.load = function(){
       api.clients().get().success(function(res){
@@ -26,18 +28,8 @@ angular.module('shoplyApp').controller('ClientCtrl', function ($scope, $rootScop
       });
   	}
 
-    $scope.fullname = function(){
-     this.record.fullname = ((this.record.name || '') +' '+ (this.record.data.second_name || '') +' '+ (this.record.last_name || '') +' '+(this.record.data.second_last_name || '')).replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').toUpperCase()
-    }
-
     $scope.go_detail = function(){
       window.location.href="#!/detail/" + this.recordcredit._id
-    }
-
-    $scope.setCriteriaField = function(){
-      if(this.record){
-          this.record.creiteria = ((this.record.name || '') +' '+ (this.record.data.second_name || '') +' '+ (this.record.last_name || '') + (this.record.data.second_last_name || '')).toString().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ñ/g, 'n').replace(/\s\s/g, " ").toLowerCase();
-      }
     }
 
     $scope.earlyPaymentRow = function(){

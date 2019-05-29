@@ -4,6 +4,10 @@ angular.module('shoplyApp')
   .controller('paymentCtrl', function ($scope, api, modal, constants, $state, storage, account, $rootScope, $stateParams, $timeout) {
     $scope.Records  = false;
     $scope.records = [];
+    $scope.form = {};
+    $scope.form.data = {};
+    $scope.form.data.finance_quoteFixed = 12990;
+    $scope.form.data.finance_quoteChange = 960;
 
     $scope.load = function(){
     	api.payments().add("all").get().success(function(res){
@@ -14,6 +18,31 @@ angular.module('shoplyApp')
         if($stateParams.payment){
             $scope.payment = $stateParams.payment;
         }
+    }
+
+    $scope.early_payment = function(){
+      // system es la varibale que contiene la fecha de deposito.
+      $scope.mora = {};
+
+      var system = moment(this.record._credit.data.deposited_time);
+      var now   = moment(new Date());
+
+      //variable que contiene los dias de intereses
+      $scope.payForDays  = now.diff(system, 'days') == 0 ? 1 : now.diff(system, 'days');
+      $scope.mora.interests = (parseInt(this.record._credit.data.amount[0]) * (2.18831289 / 100));
+      $scope.mora.system_quote = ($scope.form.data.finance_quoteFixed + $scope.form.data.finance_quoteChange * $scope.payForDays);
+      $scope.mora.iva = $scope.mora.system_quote * (19 / 100);
+      
+      $scope.mora.interestsPeerDays = ( angular.copy($scope.mora.interests) / 30 );
+      $scope.mora.interestsDays = ($scope.mora.interestsPeerDays ) * $scope.payForDays;
+      
+      $scope.totalizePayment(this.record);
+      this.record.data.early_payment  = $scope.mora; 
+
+    }
+
+    $scope.totalizePayment = function(record){
+      $scope.mora.total_payment = (parseInt(record._credit.data.amount[0])) + ($scope.mora.interestsDays) + ($scope.mora.system_quote || 0) + ($scope.mora.iva || 0);
     }
 
     $scope.show_user_detail = function(){
@@ -81,6 +110,54 @@ angular.module('shoplyApp')
                               }
                             });
                         }); 
+                   }
+        });
+    }
+
+    $scope.finishedAbono = function(){
+      var _credit = angular.copy(this.record._credit);
+      var record = angular.copy(this.record);
+
+       modal.confirm({
+               closeOnConfirm : true,
+               title: "Está Seguro?",
+               text: "Confirmar Abono?",
+               confirmButtonColor: "#008086",
+               type: "success" },
+               function(isConfirm){ 
+                   if (isConfirm) {
+                          record.data.paymentDone = true;
+                          api.payments(record._id).put(record).success(function(res){
+                            $scope.load();
+                            swal({
+                                title: "Bien Hecho",
+                                text: "Abono recibido correctamente.",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonColor: "#008086",
+                                confirmButtonText: "Ok",
+                                closeOnConfirm: true
+                              },
+                              function(isConfirm){
+                                if(isConfirm){
+                          
+                                }
+                              });
+                          }); 
+                          swal({
+                              title: "Bien Hecho",
+                              text: "Abono recibido correctamente.",
+                              type: "success",
+                              showCancelButton: false,
+                              confirmButtonColor: "#008086",
+                              confirmButtonText: "Ok",
+                              closeOnConfirm: true
+                            },
+                            function(isConfirm){
+                              if(isConfirm){
+                        
+                              }
+                            });
                    }
         });
     }

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('shoplyApp').controller('EditClientCtrl', function ($scope, $rootScope, sweetAlert, constants, $state, modal, api, storage, $stateParams, $http, $filter, $firebaseObject, Firebase, $firebaseArray, $window, $firebaseStorage) {
+angular.module('shoplyApp').controller('EditClientCtrl', function ($scope, $rootScope, sweetAlert, constants, $state, modal, api, storage, $stateParams, $http, $filter, $firebaseObject, Firebase, $firebaseArray, $window, $firebaseStorage, account) {
     $scope.Records  = false;
     $scope.records = [];
 
@@ -193,6 +193,39 @@ $scope.ocupacion_records = [
                 })[0]);
             } 
     };
+
+    $scope.changePwd = function(){
+        swal({
+          title: "Estas seguro?",
+          text: "Deseas cambiar la contraseña de esta cuenta?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          cancelButtonText: "No!",
+          confirmButtonText: "Si!",
+          closeOnConfirm: false
+        },
+        function(){
+            var form  = {};
+            form.newpwd = $scope.newpwd;
+            form.confirmpwd = form.newpwd;
+
+            account.usuario().password_reset(angular.extend(form, { id : $scope.client._id })).then(function(res){
+                if(res){
+                sweetAlert.swal("Cambio de clave!", "se ha cambiado correctamente", "success");
+
+                }
+            }, function(status){
+                if(status == 404){
+                 sweetAlert.swal({
+                        title: "Formulario no completado",
+                        text: "El usuario no existe",
+                        type: "error"
+                    })
+                }
+            })
+        });
+    }
 
 
     $scope.upload_cf = function(){
@@ -1788,23 +1821,26 @@ $scope.ocupacion_records = [
         });
     }
 
-    $scope.unblockAccount = function(){
+    $scope.blockAccountTemp = function(){
         swal({
-          title: "Estas seguro?",
-          text: "Deseas desbloquear esta cuenta?",
-          type: "warning",
+          title: "Digite el numero de dias a bloquear!",
+          text: "Días de bloqueo",
+          type: "input",
           showCancelButton: true,
           confirmButtonClass: "btn-danger",
-          cancelButtonText: "No!",
-          confirmButtonText: "Si!",
-          closeOnConfirm: false
-        },
-        function(){
-            api.user().add("unblock/" + $scope.client._id).put().success(function(res){
+          closeOnConfirm: false,
+          inputPlaceholder: "Escriba el numero de dias"
+        }, function (inputValue) {
+          if (inputValue === false) return false;
+          if (inputValue === "") {
+            swal.showInputError("You need to write something!");
+            return false
+          }
+        api.user().add("block-temp/" + $scope.client._id).put({ days : parseInt(inputValue)}).success(function(res){
                 if(res){
                   swal({
                       title: "Registro modificado",
-                      text: "Has desbloqueado este cliente satifactoriamente",
+                      text: "Has bloqueado este temporalmente a este cliente",
                       type: "success",
                       confirmButtonColor: "#008086",
                       closeOnConfirm: false
@@ -1812,6 +1848,227 @@ $scope.ocupacion_records = [
                     function(){
                       $state.go("clients");
                       window.sweetAlert.close();
+                    });
+                }
+            });
+        });
+    }
+
+    $scope.unblockAccountTemp = function(){
+        swal({
+          title: "Estas seguro?",
+          text: "Deseas desbloquear a este cliente?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          cancelButtonText: "No!",
+          confirmButtonText: "Si!",
+          closeOnConfirm: true
+        },
+        function(){
+            api.user().add("unblock-temp/" + $scope.client._id).put({}).success(function(res){
+                    if(res){
+                      swal({
+                          title: "Registro modificado",
+                          text: "Has desbloqueado a este cliente",
+                          type: "success",
+                          confirmButtonColor: "#008086",
+                          closeOnConfirm: false
+                        },
+                        function(){
+                          window.sweetAlert.close();
+                        });
+                    }
+             });
+        });
+    }
+
+    $scope.unblockAccount = function(){
+        swal({
+          title: "Estas seguro?",
+          text: "Deseas desbloquear a este cliente?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          cancelButtonText: "No!",
+          confirmButtonText: "Si!",
+          closeOnConfirm: true
+        },
+        function(){
+            api.user().add("unblock/" + $scope.client._id).put({}).success(function(res){
+                    if(res){
+                          delete $scope.client.data.blocked;
+                          delete $scope.client.data.banned_time;
+                      swal({
+                          title: "Registro modificado",
+                          text: "Has desbloqueado a este cliente",
+                          type: "success",
+                          confirmButtonColor: "#008086",
+                          closeOnConfirm: false
+                        },
+                        function(){
+                          window.sweetAlert.close();
+
+                        });
+                    }
+             });
+        });
+    }
+
+           /* api.user($rootScope.user._id).put($rootScope.user).success(function(res){
+                if(res){
+                    storage.update("user", $rootScope.user);
+                    sweetAlert.close();
+
+                    if($rootScope.showBanned ){
+                        $state.go("dashboard.home", { reload : true});
+                    }else{
+                        $state.go("dashboard.new_credit", { reload : true} );
+                    }
+                    
+                    $scope.load();
+                }
+            });*/
+
+    $scope.enable_cupo = function(){
+        swal({
+          title: "Estas seguro?",
+          text: "Deseas habilitar la opcion de cupo a este cliente?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          cancelButtonText: "No!",
+          confirmButtonText: "Si!",
+          closeOnConfirm: true
+        },
+        function(){
+            $scope.client.data.cupon_updated = false;
+
+          delete $scope.client.data.ingresos_obj.$order;
+          delete $scope.client.data.egresos_obj.$order;
+            if( $scope.client.data.cf){
+                delete $scope.client.data.cf.$id;
+                delete $scope.client.data.cf.$priority;
+            }
+            if( $scope.client.data.cl){
+                delete $scope.client.data.cl.$id;
+                delete $scope.client.data.cl.$priority; 
+            }
+            if( $scope.client.data.ca){
+                 delete $scope.client.data.ca.$id;
+                delete $scope.client.data.ca.$priority; 
+            }
+
+            if( $scope.client.data.dt){
+                delete $scope.client.data.dt.$id;
+                delete $scope.client.data.dt.$priority; 
+            }
+
+            if( $scope.client.data.dt2){
+                delete $scope.client.data.dt2.$id;
+                delete $scope.client.data.dt2.$priority; 
+            }
+
+            if( $scope.client.data.ce){
+                delete $scope.client.data.ce.$id;
+                delete $scope.client.data.ce.$priority; 
+            }
+
+            if( $scope.client.data.ex){
+                delete $scope.client.data.ex.$id;
+                delete $scope.client.data.ex.$priority; 
+            }
+
+            if( $scope.client.data.ex2){
+                delete $scope.client.data.ex2.$id;
+                delete $scope.client.data.ex2.$priority;  
+            }
+
+            if( $scope.client.data.re){
+                delete $scope.client.data.re.$id;
+                delete $scope.client.data.re.$priority;  
+            }
+            api.user().add($scope.client._id).put($scope.client).success(function(res){
+                if(res){
+                     delete $scope.client.data.cupon_updated;
+                  swal({
+                      title: "Registro modificado",
+                      text: "Has habilitado la opcion de cupo",
+                      type: "success",
+                      confirmButtonColor: "#008086",
+                      closeOnConfirm: false
+                    });
+                }
+            });
+        });
+    }
+
+    $scope.disable_cupo = function(){
+        swal({
+          title: "Estas seguro?",
+          text: "Deseas deshabilitar la opcion de cupo a este cliente?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          cancelButtonText: "No!",
+          confirmButtonText: "Si!",
+          closeOnConfirm: true
+        },
+        function(){
+            $scope.client.data.cupon_updated = true;
+          delete $scope.client.data.ingresos_obj.$order;
+          delete $scope.client.data.egresos_obj.$order;
+            if( $scope.client.data.cf){
+                delete $scope.client.data.cf.$id;
+                delete $scope.client.data.cf.$priority;
+            }
+            if( $scope.client.data.cl){
+                delete $scope.client.data.cl.$id;
+                delete $scope.client.data.cl.$priority; 
+            }
+            if( $scope.client.data.ca){
+                 delete $scope.client.data.ca.$id;
+                delete $scope.client.data.ca.$priority; 
+            }
+
+            if( $scope.client.data.dt){
+                delete $scope.client.data.dt.$id;
+                delete $scope.client.data.dt.$priority; 
+            }
+
+            if( $scope.client.data.dt2){
+                delete $scope.client.data.dt2.$id;
+                delete $scope.client.data.dt2.$priority; 
+            }
+
+            if( $scope.client.data.ce){
+                delete $scope.client.data.ce.$id;
+                delete $scope.client.data.ce.$priority; 
+            }
+
+            if( $scope.client.data.ex){
+                delete $scope.client.data.ex.$id;
+                delete $scope.client.data.ex.$priority; 
+            }
+
+            if( $scope.client.data.ex2){
+                delete $scope.client.data.ex2.$id;
+                delete $scope.client.data.ex2.$priority;  
+            }
+
+            if( $scope.client.data.re){
+                delete $scope.client.data.re.$id;
+                delete $scope.client.data.re.$priority;  
+            }
+            api.user().add($scope.client._id).put($scope.client).success(function(res){
+                if(res){
+                $scope.client.data.cupon_updated = true;
+                  swal({
+                      title: "Registro modificado",
+                      text: "Has deshabilitado la opcion de cupo del usuario",
+                      type: "success",
+                      confirmButtonColor: "#008086",
+                      closeOnConfirm: false
                     });
                 }
             });

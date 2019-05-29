@@ -431,6 +431,17 @@ angular
                   pageTitle: 'Creditos'
                 }
           })
+          .state('preventivos', {
+                url: '/preventivos',
+                access: { requiredAuthentication: true },
+                templateUrl: 'views/credits/preventivos.html',
+                params: {
+                  status: null
+                },
+                data: {
+                  pageTitle: 'Preventivos'
+                }
+          })
           .state('clients', {
                 url: '/clients/:status',
                 access: { requiredAuthentication: true },
@@ -479,6 +490,7 @@ angular
             window.localStorage.clear();
             delete $rootScope.isLogged;
             window.location.reload();
+            delete $rootScope.isAllowed;
       }
 
       $rootScope.offlineMode = function(){
@@ -541,7 +553,7 @@ angular
           }
         };
 
-        //forceSSL();
+        forceSSL();
 
         $rootScope.currency = constants.currency;
         $rootScope.base = constants.uploadFilesUrl;
@@ -552,6 +564,7 @@ angular
         $rootScope.online = navigator.onLine;
         $rootScope.loader = false;
         $rootScope.loaderText = 'cargando...';
+        $rootScope.isAllowed = false;
 
 
 
@@ -560,11 +573,6 @@ angular
           delete localStorage.access_token;
           delete localStorage.token;
         }
-
-
-        $http.get('https://freegeoip.net/json/').success(function(res){
-            $rootScope.client_metadata = res || {};
-        });
 
         $window.addEventListener("offline", function() {
           $rootScope.$apply(function() {

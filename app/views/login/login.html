@@ -24,7 +24,12 @@
                 </div>
                 <div class="row alert alert-danger" role="alert" ng-show="blocked" style="font-size:12px;position:relative;top:-12px;">
                     <div class="container">
-                      Cuenta bloqueada. Contacté a un administrador.
+                      Cuenta bloqueada. Contacte a un administrador.
+                    </div>
+                </div>
+                <div class="row alert alert-danger" role="alert" ng-show="blocked_days_to_left" style="font-size:12px;position:relative;top:-12px;">
+                    <div class="container">
+                      Cuenta bloqueada temporalmente. vuelva a intentarlo en {{(blocked_days_to_left + 1 ) + ' días'}}.
                     </div>
                 </div>
                 <div class="row alert alert-danger" role="alert" ng-show="invalid_data" style="font-size:12px;position:relative;top:-12px;">

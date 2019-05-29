@@ -79,8 +79,9 @@ angular.module('shoplyApp')
       $scope.current_credit = null;
       $rootScope.showBanned = null;
       $scope.with_offer = null;
+      $rootScope.isAllowed  = !$rootScope.user.data.cupon_updated || true;
+      $rootScope.hide_cupo_menu  = $rootScope.user.data.cupon_updated || false;
 
-   
       api.user($rootScope.user._id).get().success(function(res){
           if(res){
               if(res.data.cupon != $rootScope.user.data.cupon){
@@ -103,22 +104,6 @@ angular.module('shoplyApp')
       if($stateParams.with_offer){
             $scope.with_offer = true;
       }
-
-      api.credits().add("max_amount").get().success(function(res){
-          $scope.cupon = res || [];
-          $scope.isAllowed = (res.count % 2) == 0 ? false : true;
-          if(res.credit){
-              var pay_day = moment(res.credit.data.pay_day);
-              var date_expired = pay_day.add(30, 'days');
-
-              if(moment(res.credit._payment[0].createdAt).isBefore(date_expired)){
-                  $rootScope.showCupoMenu = true;
-              }
-
-          }
-      }).error(function(){
-          $rootScope.showCupoMenu = false;
-      });
 
       api.credits().add('current').get().success(function(res){
             $scope.Records  = true;
@@ -197,6 +182,12 @@ angular.module('shoplyApp')
         }
 
     }
+
+    api.credits().add("max_amount").get().success(function(res){
+          $scope.cupon = res || [];
+      }).error(function(){
+          $rootScope.showCupoMenu = false;
+      });
 
     $scope.delete_credit = function(){
         modal.removeConfirm({closeOnConfirm : true}, 
@@ -460,35 +451,49 @@ angular.module('shoplyApp')
 
     $scope.$watch('new_payment_form.transaction', function(o, n){
       if(n){
-          swal({
-            title: "Está Seguro?",
-            text: "¿Confirma que has realizado el pago?",
-            type: "info",
-            confirmButtonColor: "#008086",
-            cancelButtonText: "Cancelar",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            showLoaderOnConfirm: true,
-          },
-          function(){
-                $scope.new_payment();
-          });
+        swal({
+          title: "Tipo de pago",
+          text: "Confirmo que he realizado un :",
+          type: "info",
+          showCancelButton: true,
+          confirmButtonText: "Pago Total",
+          cancelButtonColor: "#00999F", 
+          confirmButtonColor: "#00999F", 
+          cancelButtonText: "Abono",
+          closeOnConfirm: true,
+          closeOnCancel: true
+        },
+        function(isConfirm) {
+          if (isConfirm) {
+            $scope.new_payment(true);
+          } else {
+            $scope.new_payment(false);
+          }
+        });
       }
 
       if(o){
-          swal({
-            title: "Está Seguro?",
-            text: "¿Confirma que has realizado el pago?",
-            type: "info",
-            confirmButtonColor: "#008086",
-            cancelButtonText: "Cancelar",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            showLoaderOnConfirm: true,
-          },
-          function(){
-                $scope.new_payment();
-          });
+        swal({
+          title: "Tipo de pago",
+          text: "Confirmo que he realizado un :",
+          type: "info",
+          showCancelButton: true,
+          confirmButtonText: "Pago Total",
+          cancelButtonColor: "#00999F", 
+          confirmButtonColor: "#00999F", 
+          cancelButtonText: "Abono",
+          closeOnConfirm: true,
+          closeOnCancel: true
+        },
+        function(isConfirm) {
+          if (isConfirm) {
+            $scope.new_payment(true);
+            window.sweetAlert.close()
+          } else {
+            $scope.new_payment(false);
+            window.sweetAlert.close()
+          }
+        });
       }
     });
 
@@ -540,11 +545,18 @@ angular.module('shoplyApp')
         $scope.show_detail = $scope.show_detail ? false : true;
     }
 
-    $scope.new_payment = function(){
+    $scope.new_payment = function(type){
+
       $scope.new_payment_form.data = $scope.paymentForm;
       $scope.new_payment_form.data.bank = $rootScope.bank_obj;
       $scope.new_payment_form._credit = $scope.current_credit._id;
       $scope.new_payment_form._user = $rootScope.user._id;
+    
+      if(type){
+          $scope.new_payment_form.data.tipo_pago = "Total";
+        }else{
+          $scope.new_payment_form.data.tipo_pago = "Abono";
+      }
 
       api.payments().post($scope.toFormData($scope.new_payment_form), {
         transformRequest: angular.identity,
@@ -552,20 +564,36 @@ angular.module('shoplyApp')
         }).success(function(res){
               
               if(res){
+                if(type){
+                      $scope.current_credit._payment = $scope.current_credit._payment || [];
+                      $scope.current_credit._payment.push(res._id);
+                      $scope.current_credit._contract = $scope.current_credit._contract ? $scope.current_credit._contract._id : null;
+                      $scope.current_credit.data.status = 'Pagado';
+                      api.credits($scope.current_credit._id).put($scope.current_credit).success(function(response){
+                        if(response){
+                          swal("Pago Enviado!", "Has enviado la evidencia de pago correctamente. Este pago esta sujeto a verificación.", "success");
+                          delete $rootScope.bank_selected;
+                          delete $rootScope.bank_obj;
+                          $scope.load();
+
+                        }
+                    });                  
+                }else{
                   $scope.current_credit._payment = $scope.current_credit._payment || [];
-                  $scope.current_credit._payment.push(res._id);
-                  $scope.current_credit._contract = $scope.current_credit._contract._id || null;
-                  $scope.current_credit.data.status = 'Pagado';
-                  api.credits($scope.current_credit._id).put($scope.current_credit).success(function(response){
-                    if(response){
-                      swal("Pago Enviado!", "Has enviado la evidencia de pago correctamente. Este pago esta sujeto a verificación.", "success");
-                      delete $rootScope.bank_selected;
-                      delete $rootScope.bank_obj;
-                      $scope.load();
+                      $scope.current_credit._payment.push(res._id);
+                      $scope.current_credit._contract = $scope.current_credit._contract ? $scope.current_credit._contract._id : null;
+                      $scope.current_credit.data.status = 'Pagado';
+                      
+                      api.credits($scope.current_credit._id).put($scope.current_credit).success(function(response){
+                        if(response){
+                          swal("Pago Enviado!", "Has enviado la evidencia de pago correctamente. Este pago esta sujeto a verificación.", "success");
+                          delete $rootScope.bank_selected;
+                          delete $rootScope.bank_obj;
+                          $scope.load();
 
-                    }
-                });
-
+                        }
+                    }); 
+                }
               }
         });
     }

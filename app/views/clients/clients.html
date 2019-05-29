@@ -57,8 +57,8 @@
               <div class="col-lg-6">
                   <label>Buscar</label>
                   <div class="form-group">
-                      <input type="text" ng-model="search" placeholder="Buscar Prestamo" class="form-control">
-                  </div>            
+                      <input type="text" ng-model="search" placeholder="Buscar Cliente" class="form-control">
+                  </div> 
               </div>
               <div class="col-lg-8 row">
                 <div class="col-lg-6">
@@ -72,7 +72,7 @@
           </div>
           <div class="col-lg-6">
             <div class="form-group pull-right" style="width:150px;">
-                <selectize name="estrato" required config="itemsConfig" options='[{value:"20", text:"20"}, {value:"40", text:"40"}, {value:"60", text:"60"},  {value:"70", text:"70"}, {value:"80", text:"80"}, {value:"90", text:"90"}, {value:"100", text:"100"}]' ng-model="items"></selectize>            
+                <selectize name="estrato" required config="itemsConfig" options='[{value:"20", text:"20"}, {value:"40", text:"40"}, {value:"60", text:"60"},  {value:"70", text:"70"}, {value:"80", text:"80"}, {value:"90", text:"90"}, {value:"100", text:"100"}, {value:"200", text:"200"}, {value:"300", text:"300"}]' ng-model="items"></selectize>            
             </div>
           </div>
       </div>
@@ -85,6 +85,7 @@
             <th>Cedula</th>
             <th>Email</th>
             <th>Creditos</th>
+            <th>Dias bloqueo restantes</th>
             <th></th>
             <th></th>
             <th></th>
@@ -95,19 +96,20 @@
           <td colspan="9" class="text-center" ng-show="!filtered || filtered.length == 0"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>&nbsp;No existen registros</td>
         </tr>
           <tr
-            ng-init="setCriteriaField()"
-           ng-click="detail()"
+              ng-init="setCriteriaField()"
+              ng-click="detail()"
               pagination-id="clients_entity"
-              dir-paginate="record in filtered = (records | filter:search)                
+              dir-paginate="record in filtered = (records | orderBy:sortBy:reverse|filter:search)            
               | itemsPerPage: items" 
               >
             <td><i ng-show="record.data.facebookId" class="fa fa-facebook-official" aria-hidden="true"></i>
                 <i ng-show="!record.data.facebookId" class="fa fa-diamond text-primary" aria-hidden="true"></i>
               </td>
-            <td ng-init="fullname()" ><a ui-sref="edit_client({client : record._id})" href="#/edit_client/" >{{record.fullname}}</a></td>
+            <td><a ui-sref="edit_client({client : record._id})" href="#/edit_client/" >{{record.data.fname}}</a></td>
             <td>{{record.cc || 'no definido'}}</td>
             <td>{{(record.email).toUpperCase()}}</td>
             <td>{{record.data.count || 0}}</td>
+            <td>{{0}}</td>
             <td><button class="btn btn-block btn-primary btn-sm" ng-click="credits()">Préstamos</button></td>
             <td><button class="btn btn-block btn-primary btn-sm" ng-click="payments()">Pagos</button></td>
             <td><button class="btn btn-block btn-danger btn-sm" ng-click="delete()" ng-disabled="$root.user.type == 'SUPERVISOR'">Eliminar</button></td>
@@ -119,7 +121,7 @@
     <br /> 
     <br /> 
   <div class="pull-left"> 
-    <dir-pagination-controls class="pull-right" pagination-id="clients_entity"></dir-pagination-controls>
+    <dir-pagination-controls  class="pull-right" pagination-id="clients_entity"></dir-pagination-controls>
   </div> 
 </div>
 <br />

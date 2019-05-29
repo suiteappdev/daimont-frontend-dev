@@ -11,7 +11,7 @@
 <div class="container hidden-md-down">
   <div class="row">
     <div class="col-lg-12">
-        <div class="alert alert-warning alert-dismissible fade show" role="alert" ng-hide="deleted || !current_credit || current_credit.data.status == 'Aceptado'  || current_credit.data.status == 'Aceptado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Consultado'" ng-show="(current_credit.data.status == 'Pendiente')">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" ng-hide="deleted || !current_credit || current_credit.data.status == 'Aceptado'  || current_credit.data.status == 'Aceptado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Firmado'  || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Consultado'" ng-show="(current_credit.data.status == 'Pendiente')">
           <strong>¡Firmar Contrato!</strong> Para continuar con el proceso de préstamo debes firmar nuestro contrato.
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -180,11 +180,14 @@
                                     <div class="row text-left" style="margin-bottom:15px;">
                                         <div class="col-lg-12" ng-hide="(payForDays > 30 ? true : false)">
                                                 <span   class="badge badge-default" ng-show="current_credit.data.status == 'Pendiente'">PENDIENTE POR FIRMAR</span>
-                                                <span  class="badge badge-primary" ng-show="current_credit.data.status == 'Firmado'">FIRMADO Y ESPERANDO APROBACIÓN</span>
-                                                <span class="badge badge-primary" ng-show="current_credit.data.status == 'Preaprobado'">ESPERANDO APROBACIÓN</span>
-                                                <span class="badge badge-success" ng-show="current_credit.data.status == 'Pagado'">PAGADO</span>
+                                                <span  class="badge badge-primary" ng-show="current_credit.data.status == 'Firmado' && !current_credit.data.auto_signed">FIRMADO Y ESPERANDO APROBACIÓN</span>
+                                                
+                                                <span class="badge badge-primary" ng-show="current_credit.data.auto_signed &&  current_credit.data.status == 'Firmado'">ESPERANDO APROBACIÓN</span>
+
+                                                <span class="badge badge-success" ng-show="current_credit.data.status == 'Pagado' && current_credit._payment[(current_credit._payment.length - 1)].data.tipo_pago == 'Total'">PAGADO</span>
+                                                <span class="badge badge-success" ng-show="current_credit.data.status == 'Pagado' && current_credit._payment[current_credit._payment.length - 1].data.tipo_pago == 'Abono'">EN ABONO</span>
                                                 <span class="badge badge-success" ng-show="current_credit.data.status == 'Aceptado'">APROBADO</span>
-                                                <span class="badge badge-success" ng-show="current_credit.data.status == 'Consignado' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Fraude' ">CONSIGNADO</span>
+                                                <span class="badge badge-success" ng-show="current_credit.data.status == 'Consignado' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Fraude' ||  current_credit.payment[0].data.tipo_pago == 'Abono' ">CONSIGNADO</span>
                                                 <span class="badge badge-danger" ng-show="current_credit.data.status == 'Rechazado' || current_credit.data.status == 'Consultado'">RECHAZADO</span>
 
                                         </div>
@@ -192,7 +195,7 @@
                                           <span class="badge badge-danger">MOROSO</span>
                                         </div>
                                     </div>
-                                    <div class="row"> 
+                                    <div class="row" ng-show="current_credit.data.status != 'Rechazado'"> 
                                       <div class="col-lg-6">
                                         <div class="form-group text-left">
                                           <label style="font-size: 12px;">Monto Solicitado</label>
@@ -411,25 +414,25 @@
                      <button ng-hide="current_credit.data.status == 'Firmado' || current_credit.data.status == 'Consignado' || current_credit.data.status == 'Pagado' || current_credit.data.status == 'Rechazado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo'" ng-disabled="current_credit.data.status == 'Firmado' || current_credit.data.status == 'Consignado' || current_credit.data.status == 'Pagado' || current_credit.data.status == 'Rechazado' || current_credit.data.status == 'Consultado' || current_credit.data.status == 'Preaprobado' || current_credit.data.status == 'Fraude' || current_credit.data.status == 'Dificil_recaudo'"  ng-click="delete_credit()" class="btn btn-danger btn-sm btn-block pull_left"><i class="fa fa-trash" aria-hidden="true"></i> Borrar</button>
                   </div>
               </li>
-              <li class="list-group-item row text-left">
+              <li class="list-group-item row text-left" ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7">{{expired ? 'Su fecha de pago ha caducado' : 'Fecha de Pago'}}</div>
                   <div class="col-md-9 col-5">
                      <span class="badge {{expired ? 'badge-danger' : 'badge-primary'}} ">{{ expired ? date_expired : current_credit.data.pay_day | moment: 'format': 'MMMM DD, YYYY' }}</span>
                   </div>
               </li>
-              <li class="list-group-item row text-left">
+              <li class="list-group-item row text-left" ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7">Monto</div>
                   <div class="col-md-9 col-5">{{current_credit.data.amount[0] | currency:"$ "}} COP</div>
               </li>
-              <li class="list-group-item row text-left">
+              <li class="list-group-item row text-left" ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7">Interesés</div>
                   <div class="col-md-9 col-5">{{paymentForm.interestsDays | currency:"$ "}} COP</div>
               </li>
-              <li class="list-group-item row text-left">
+              <li class="list-group-item row text-left" ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7">Gestión de Crédito</div>
                   <div class="col-md-9 col-5">{{paymentForm.system_quote | currency:"$ "}} COP</div>
               </li>
-              <li class="list-group-item row text-left">
+              <li class="list-group-item row text-left" ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7">Iva</div>
                   <div class="col-md-9 col-5"> {{paymentForm.iva | currency:"$ "}} COP</div>
               </li>
@@ -439,7 +442,8 @@
                      <span class="badge badge-default" ng-show="current_credit.data.status == 'Pendiente'">PENDIENTE POR FIRMAR</span>
                      <span class="badge badge-primary" ng-show="current_credit.data.status == 'Firmado'">ESPERANDO APROBACIÓN</span>
                      <span class="badge badge-primary" ng-show="current_credit.data.status == 'Preaprobado'">ESPERANDO APROBACIÓN</span>
-                     <span class="badge badge-success" ng-show="current_credit.data.status == 'Pagado'">PAGADO</span>
+                     <span class="badge badge-success" ng-show="current_credit.data.status == 'Pagado' && current_credit._payment[(current_credit._payment.length - 1)].data.tipo_pago == 'Total'">PAGADO</span>
+                     <span class="badge badge-success" ng-show="current_credit.data.status == 'Pagado' && current_credit._payment[current_credit._payment.length - 1].data.tipo_pago == 'Abono'">EN ABONO</span>
                      <span class="badge badge-success" ng-show="current_credit.data.status == 'Aceptado'">APROBADO</span>
                      <span class="badge badge-success" ng-show="current_credit.data.status == 'Consignado' || current_credit.data.status == 'Dificil_recaudo' || current_credit.data.status == 'Fraude' ">CONSIGNADO</span>
                      <span class="badge badge-danger" ng-show="current_credit.data.status == 'Rechazado' || current_credit.data.status == 'Consultado'">RECHAZADO</span>
@@ -448,15 +452,15 @@
                       <span class="badge badge-danger">MOROSO</span>
                   </div>
               </li>
-              <li class="list-group-item row ">
+              <li class="list-group-item row " ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7  text-left"><strong>Total a pagar hoy</strong></div>
                   <div class="col-md-9 col-5"><strong>{{paymentForm.total_payment | currency:"$ "}} COP</strong></div>
               </li>
-              <li class="list-group-item row ">
+              <li class="list-group-item row " ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7  text-left"><strong>Total a pagar a la fecha</strong></div>
                   <div class="col-md-9 col-5"><strong>{{current_credit.data.total_payment | currency:"$ "}} COP</strong></div>
               </li>
-              <li class="list-group-item row ">
+              <li class="list-group-item row " ng-show="current_credit.data.status != 'Rechazado'">
                   <div class="col-md-3 col-7  text-left"><strong>Total a pagar a 30 días</strong></div>
                   <div class="col-md-9 col-5"><strong>{{paymentForm_30_day.total_payment | currency:"$ "}} COP</strong></div>
               </li>

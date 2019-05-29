@@ -39,7 +39,7 @@
                   <div class="col-lg-6">
                     <div class="form-group text-left" ng-class="{ 'has-danger' : (profile.$submitted || profile.cedula.$touched) && profile.cedula.$invalid }">
                       <label class="text-muted">Cédula de ciudadanía*</label>
-                          <input type="number" ng-disabled="$root.user.data.updated" ng-init="parseCC()" required ng-model="$root.user.cc" class="form-control" name="cedula" placeholder="Cédula de ciudadanía"  ng-class="{ 'form-control-danger' : (profile.$submitted || profile.cedula.$touched) && profile.cedula.$invalid }"/>
+                          <input type="number" ng-disabled="$root.user.data.updated"  required ng-model="$root.user.cc" class="form-control" ng-init="parseCC()" name="cedula" placeholder="Cédula de ciudadanía"  ng-class="{ 'form-control-danger' : (profile.$submitted || profile.cedula.$touched) && profile.cedula.$invalid }"/>
                     </div>
                   </div>
                   <div class="col-lg-6">
@@ -135,7 +135,6 @@
                   </div>
               </div> 
             </form>
-
              <a ng-click="go_to_references()" class="btn btn-primary bold text-white">Siguiente</a>
 
 

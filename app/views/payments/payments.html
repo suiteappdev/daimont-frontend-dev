@@ -65,30 +65,34 @@
             <th>Fecha Solicitud</th>
             <th>Fecha Pago</th>
             <th>Evidencia</th>
+            <th>Tipo</th>
+            <th style="width: 36px;"></th>
             <th style="width: 36px;"></th>
             <th style="width: 36px;"></th>
           </tr>
         </thead>
         <tbody>
         <tr>
-          <td colspan="9" class="text-center" ng-show="!filtered || filtered.length == 0"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>&nbsp;No existen registros</td>
-        </tr>
-          <tr ng-click="detail()" style="border-left: 10px solid #002223;" 
+          <td colspan="10" class="text-center" ng-show="!filtered || filtered.length == 0"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>&nbsp;No existen registros</td>
+        </tr >
+          <tr  ng-click="detail()" style="border-left: 10px solid #002223;" 
               pagination-id="payments_entity"
               dir-paginate="record in filtered = (records | orderBy:'-createdAt' | filter:search       
               | itemsPerPage: 5 )" 
               >
-            <td><a href=""ui-sref="detail({ credit : record._credit._id})">{{record._user.name + ' ' + record._user.last_name }}</a></td>
+            <td><a href="ui-sref="detail({ credit : record._credit._id})">{{record._user.name + ' ' + record._user.last_name }}</a></td>
             <td><a href="" ui-sref="detail({ credit : record._credit._id})">{{record._credit.data.id || 'no definido'}}</a></td>
-            <td>{{record.data.total_payment | currency:"$ ":0 }}</td>
+            <td ng-init="early_payment()">{{record.data.early_payment.total_payment || record.data.total_payment | currency:"$ ":0 }}</td>
             <td>{{record.data.interestsDays | currency:"$ ":0 }}</td>
             <td>{{record.data.bank.name || 'no definido'}}</td>
             <td>{{record.data.bank.owner || 'no definido'}}</td>
             <td>{{record._credit.createdAt | moment: 'format': 'MMMM DD YYYY, h:mm:ss a' }}</td>
             <td>{{record.createdAt | moment: 'format': 'MMMM DD YYYY, h:mm:ss a' }}</td>
             <td><a href="{{record.data.transaction}}" target="_blank">Adjunto</a></td>
+            <td>{{record.data.tipo_pago || 'no definido'}}</td>
             <td><button  class="btn btn-primary btn-sm" ng-click="finishedCredit()" ng-disabled="$root.user.type == 'SUPERVISOR'">Terminar</button></td>
-             <td><button  class="btn btn-danger btn-sm" ng-click="invalidate()" ng-disabled="$root.user.type == 'SUPERVISOR'">Invalidar</button></td>
+            <td><button  class="btn btn-primary btn-sm" ng-click="finishedAbono()" ng-disabled="$root.user.type == 'SUPERVISOR'">Term. Abono</button></td>
+            <td><button  class="btn btn-danger btn-sm" ng-click="invalidate()" ng-disabled="$root.user.type == 'SUPERVISOR'">Invalidar</button></td>
           </tr>
         </tbody>
       </table>       

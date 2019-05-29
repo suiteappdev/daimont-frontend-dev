@@ -420,12 +420,12 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             '*.html',
-            'fonts/{,*/}',
-            'statics/{,*/}',
+            'fonts/{,*}',
+            'statics/{,*}',
             'views/{,*/}*.html',
             'views/{,*/}*.ejs',
-            'images/{,*/}*.{webp}',
-            'styles/fonts/{,*/}*.*'
+            'images/{,*}*.{webp}',
+            'styles/fonts/{,*}*.*'
           ]
         }, {
           expand: true,

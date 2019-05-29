@@ -97,31 +97,44 @@ angular.module('shoplyApp')
       };
 
 
-      if($scope.signup.$valid){
-        if($scope.formRegister.data.password != $scope.formRegister.data.confirm_password){
-            sweetAlert.swal("Formulario Incompleto.", "Las contraseñas no coinciden.", "error");
-            return;
+      api.user().add("email/" + $scope.formRegister.data.email).get().success(function(data){
+        if(data.count  > 0){
+            sweetAlert.swal("Correo en uso.", "Este correo ya se encuentra registrado", "error");
+        }else{
+          if($scope.signup.$valid){
+            if($scope.formRegister.data.password != $scope.formRegister.data.confirm_password){
+                sweetAlert.swal("Formulario Incompleto.", "Las contraseñas no coinciden.", "error");
+                return;
+            }
+
+            if($scope.formRegister.data.email != $scope.email_confirm){
+                sweetAlert.swal("Formulario Incompleto.", "Los correos no coinciden", "error");
+                return;
+            }
+
+            $scope.session_start = true;
+
+
+            if($rootScope.credit){
+                var _credit = {};
+                _credit.data = $rootScope.credit.data;
+                _credit.data.client_metadata = $rootScope.client_metadata || {};
+                _credit.data.status = 'Pendiente';
+            }
+
+
+
+            account.usuario().register(angular.extend($scope.formRegister.data, {username : $scope.formRegister.data.email, credit : _credit || {}})).then(_success, _error);
+          }else if($scope.signup.$invalid){
+                modal.incompleteForm();
+          }           
         }
 
-        if($scope.formRegister.data.email != $scope.email_confirm){
-            sweetAlert.swal("Formulario Incompleto.", "Los correos no coinciden", "error");
-            return;
-        }
-
-        $scope.session_start = true;
+      }).error(function(err){
+        console.log(err);
+      });
 
 
-        if($rootScope.credit){
-            var _credit = {};
-            _credit.data = $rootScope.credit.data;
-            _credit.data.client_metadata = $rootScope.client_metadata || {};
-            _credit.data.status = 'Pendiente';
-        }
-
-        account.usuario().register(angular.extend($scope.formRegister.data, {username : $scope.formRegister.data.email, credit : _credit || {}})).then(_success, _error);
-      }else if($scope.signup.$invalid){
-            modal.incompleteForm();
-      } 
     }
 
     $scope.load = function(){

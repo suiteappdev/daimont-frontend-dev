@@ -268,6 +268,13 @@ $scope.ocupacion_records = [
     }
 
     $scope.go_to_resumen = function(){
+        
+        if($rootScope.cc_exist){
+            sweetAlert.swal("Formulario Incompleto.", "Este numero de cedula de ciudadania ya esta registrado.", "error");
+            $state.go("profile.basic"); 
+            return; 
+        }
+
         if(!$rootScope.user.data.numero_cuentas_bancaria){
             $scope.bank.numero_cuentas_bancaria.$setValidity('required', false);
 
@@ -396,9 +403,10 @@ $scope.ocupacion_records = [
                 if(response.exists > 0){
                      sweetAlert.swal("Formulario Incompleto.", "Este numero de cedula de ciudadania ya esta registrado.", "error");
                      $state.go('profile.basic');
-                     $scope.cc_exist = true;
+                     $rootScope.cc_exist = true;
                      return;
                 }else{
+                    delete $rootScope.cc_exist;
                     $state.go('profile.references')
                 }
             });            
@@ -514,6 +522,10 @@ $scope.ocupacion_records = [
       $state.go('home');
     }
 
+    $scope.parseCC =  function(){
+        $rootScope.user.cc = parseInt($rootScope.user.cc);
+    }
+
     $scope.go_to = function(state){
             $state.go(state);
     }
@@ -528,6 +540,13 @@ $scope.ocupacion_records = [
 
     $scope.update = function(){
         var error_stack = [];
+
+
+        if($rootScope.cc_exist){
+            sweetAlert.swal("Formulario Incompleto.", "Este numero de cedula de ciudadania ya esta registrado.", "error");
+            $state.go("profile.basic"); 
+            return; 
+        }
 
         if(!$rootScope.user.data.ingresos_totales){
             error_stack.push("Ingresos"); 
@@ -629,6 +648,7 @@ $scope.ocupacion_records = [
            return;
         }
 
+
         if(!$rootScope.user.data.updated){
             $scope.document_exist(function(response){
                 if(response.exists > 0){
@@ -695,6 +715,52 @@ $scope.ocupacion_records = [
                if (isConfirm){
                         $rootScope.user.data.terms = true;
                         $rootScope.updating = true;
+
+                           delete $rootScope.user.data.ingresos_obj.$order;
+                              delete $rootScope.user.data.egresos_obj.$order;
+                                if( $rootScope.user.data.cf){
+                                    delete $rootScope.user.data.cf.$id;
+                                    delete $rootScope.user.data.cf.$priority;
+                                }
+                                if( $rootScope.user.data.cl){
+                                    delete $rootScope.user.data.cl.$id;
+                                    delete $rootScope.user.data.cl.$priority; 
+                                }
+                                if( $rootScope.user.data.ca){
+                                     delete $rootScope.user.data.ca.$id;
+                                    delete $rootScope.user.data.ca.$priority; 
+                                }
+
+                                if( $rootScope.user.data.dt){
+                                    delete $rootScope.user.data.dt.$id;
+                                    delete $rootScope.user.data.dt.$priority; 
+                                }
+
+                                if( $rootScope.user.data.dt2){
+                                    delete $rootScope.user.data.dt2.$id;
+                                    delete $rootScope.user.data.dt2.$priority; 
+                                }
+
+                                if( $rootScope.user.data.ce){
+                                    delete $rootScope.user.data.ce.$id;
+                                    delete $rootScope.user.data.ce.$priority; 
+                                }
+
+                                if( $rootScope.user.data.ex){
+                                    delete $rootScope.user.data.ex.$id;
+                                    delete $rootScope.user.data.ex.$priority; 
+                                }
+
+                                if( $rootScope.user.data.ex2){
+                                    delete $rootScope.user.data.ex2.$id;
+                                    delete $rootScope.user.data.ex2.$priority;  
+                                }
+
+                                if( $rootScope.user.data.re){
+                                    delete $rootScope.user.data.re.$id;
+                                    delete $rootScope.user.data.re.$priority;  
+                                }
+
 
                         if($rootScope.user.data.ingresos_obj && $rootScope.user.data.egresos_obj){
                             var _result = ($rootScope.user.data.ingresos_obj.number - $rootScope.user.data.egresos_obj.number);

@@ -88,7 +88,7 @@
 	</div>
   <div>
     <a ng-click="go_back()" class="btn btn-primary bold text-white">Anterior</a>
-    <a ng-click="update()" class="btn btn-primary bold text-white" value="Finalizar">Finalizar</a>     
+    <a ng-click="update()" ng-disabled="$root.user.data.updated" class="btn btn-primary bold text-white" value="Finalizar">Finalizar</a>     
   </div>
 </form>
 
