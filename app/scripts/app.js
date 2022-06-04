@@ -27,7 +27,8 @@ angular
     'vcRecaptcha',
     'ui.map',
     'facebook',
-    'angular.filter'
+    'angular.filter',
+    'angular-md5'
   ])
   .config(function ($stateProvider, $httpProvider, constants, $urlRouterProvider, FacebookProvider, paginationTemplateProvider, $locationProvider) {
         FacebookProvider.init('448351572192242');

@@ -70,21 +70,22 @@ angular.module('shoplyApp').controller('ClientCtrl', function ($scope, $rootScop
                 direccion : _self._user.data.direccion,
                 dias : _self.data.days[0],
                 fecha_vencimiento : moment(new Date(_self.data.pay_day)).format('MMMM DD, YYYY'),
-                fecha_actual :  moment(new Date()).format('MMMM DD YYYY, h:mm:ss a'),
+                fecha_actual :  moment(new Date("2019-02-10 16:23:34.632Z")).format('MMMM DD YYYY, h:mm:ss a'),
                 interes :$filter('currency')(_self.data.interestsDays),
                 monto : $filter('currency')(_self.data.amount[0]),
                 total : $filter('currency')(_self.data.total_payment),
                 cupon : $filter('currency')(_self._user.data.cupon),
-                ip:_self.data.client_metadata.ip || 'no definida',
-                codigo:_self._contract.data.contract,
+               // ip:_self.data.client_metadata.ip || 'no definida',
+                codigo: (_self.data && _self.data.auto_signed) ? 'Auto firma' : _self._contract.data.contract,
                 consecutivo:_self.data.id
           }});
+
+          console.log(_template)
 
           var w = window.open("", "_blank", "scrollbars=yes,resizable=no,top=200,left=200,width=350");
           
           w.document.write(_template);
           w.print();
-          w.close();
       });
     }
 

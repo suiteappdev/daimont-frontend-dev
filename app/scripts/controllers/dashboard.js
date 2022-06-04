@@ -8,7 +8,8 @@
  * Controller of the shoplyApp
  */
 angular.module('shoplyApp')
-  .controller('DashboardCtrl', function ($scope, modal,  api, storage, $state, $rootScope, $timeout, $http, $stateParams, $filter) {
+  .controller('DashboardCtrl', function ($scope, modal,  api, storage, $state, $rootScope, $timeout, $http, $stateParams, $filter, md5) {
+    window.md5 = md5;
     $scope.current_date = new Date();
     $scope.form = {};
     $scope.form.data = {};
@@ -27,7 +28,6 @@ angular.module('shoplyApp')
         {name : 'Banco BBVA', img : 'images/bbva.png', account:'488011560', nit:'9010917417', owner:'DAIMONT SAS', type:'Corriente' },
         {name : 'Banco de Bogotá', img : 'images/bogota.png', account:'592622575', owner:'LUIS FERNANDO ALVAREZ FLOREZ', cc:'1098735034', type:'Ahorros' },
         {name : 'Banco Colpatria', img : 'images/colpatria.png', account:'9362004758', owner:'LUIS FERNANDO ALVAREZ FLOREZ', cc:'1098735034', type:'Ahorros' }
-     
       ]  
 
     $scope.disableSliderControls = function(){
@@ -133,6 +133,7 @@ angular.module('shoplyApp')
                 
                 var user_payday = moment($scope.current_credit.data.pay_day);
                 var server_date = moment($scope.current_credit.data.server_date);
+                
 
                 if($scope.current_credit.data.deposited_time_server){
                     $scope.expiredate = moment($scope.current_credit.data.deposited_time_server).add(30, "days");
@@ -242,6 +243,11 @@ angular.module('shoplyApp')
           showLoaderOnConfirm: true,
         },
         function(){
+          if($rootScope.user.data.cupon >= 500000){
+            swal("Cupo superado!", "No puedes superar el tope de $500.000 COP", "error");
+            return;
+          }
+
           $rootScope.user.data.cupon = (parseInt($rootScope.user.data.cupon) + 20000);
           $rootScope.user.data.cupon_updated = true;
 
@@ -702,6 +708,8 @@ angular.module('shoplyApp')
 
     $scope.totalizePayment = function(){
       $scope.paymentForm.total_payment = (parseInt($scope.current_credit.data.amount[0])) + ($scope.paymentForm.interestsDays) + ($scope.paymentForm.system_quote || 0) + ($scope.paymentForm.iva || 0);
+      $scope.rawValue = Math.round($scope.paymentForm.total_payment);
+      $scope.paymentSignature = md5.createHash(`FiGcI4cbAx5qkvI7165RIQQ1Bc~672502~${$scope.current_credit.data.id}~${Math.round($scope.paymentForm.total_payment)}~COP`)
     }
 
     $scope.totalizePayment_30_day = function(){

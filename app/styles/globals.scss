@@ -1740,3 +1740,31 @@ a.disabled {
   pointer-events: none;
 }
 
+
+.pse-row{
+    justify-content: center;
+    display: flex;
+    margin-top: 20px;
+}
+
+.pse-btn{
+    background-color: #072467;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.pse-btn:focus{
+  background-color: #072467;
+  color: #FFFFFF;
+}
+
+.pse-btn:hover{
+  background-color: #072467;
+  color: #FFFFFF;
+}
+
+.pse-btn:active{
+  background-color: #072467;
+  color: #FFFFFF;
+}

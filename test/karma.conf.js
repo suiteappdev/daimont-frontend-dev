@@ -63,6 +63,7 @@ module.exports = function(config) {
       'bower_components/push.js/bin/push.js',
       'bower_components/ejs/ejs.js',
       'bower_components/angular-filter/dist/angular-filter.js',
+      'bower_components/angular-md5/angular-md5.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

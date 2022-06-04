@@ -73,7 +73,7 @@
                                      <span class="badge badge-danger" ng-show="recordcredit.data.status == 'Morosos'">MOROSOS</span>
                                      </td>
                                   <td>{{recordcredit._payment.data.total_payment || paymentForm.total_payment || record.data.total_payment | currency:"$ ":0}}</td>
-                                  <td><button ng-disabled="recordcredit.data.status == 'Pendiente'" class="btn btn-block btn-primary btn-sm" ng-click="contract()">Contrato</button></td>
+                                  <td><button class="btn btn-block btn-primary btn-sm" ng-click="contract()">Contrato</button></td>
 
                                 </tr>
                               </tbody>

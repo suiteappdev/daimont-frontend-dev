@@ -39,7 +39,8 @@
     "browser-detector": "^5.0.0",
     "push.js": "^1.0.5",
     "ejs": "^1.0.0",
-    "angular-filter": "^0.5.17"
+    "angular-filter": "^0.5.17",
+    "angular-md5": "^0.1.10"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"
